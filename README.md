@@ -17,7 +17,8 @@ See Obsidian for learning plan
 
 ## Setup
 
-- [VSCode ElixirLS extension](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls).
+- [VSCode ElixirLS extension](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls)
+- [VSCode Credo (Linter) extension](https://marketplace.visualstudio.com/items?itemName=pantajoe.vscode-elixir-credo)
 - Install with homebrew
 
 ```sh
