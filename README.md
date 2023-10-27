@@ -7,6 +7,7 @@ See Obsidian for learning plan
 ## Project Ideas
 
 - Compare audiobooks whisper and ebook
+- Podcast aggregator, summarizer, and indexer
 - Port qcic
   - Monitor self, ted1k and mirror
 
