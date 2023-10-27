@@ -40,6 +40,7 @@ defmodule Todo.Database do
   end
 
   defp start_workers() do
+    # returns workers: %{0 => #PID<0.208.0>, 1 => #PID<0.209.0>, 2 => #PID<0.210.0>}
     for index <- 1..3, into: %{} do
       {:ok, pid} = Todo.DatabaseWorker.start(@db_folder)
       {index - 1, pid}
