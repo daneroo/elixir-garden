@@ -1,4 +1,5 @@
 defmodule Todo.Database do
+  @moduledoc false
   use GenServer
 
   @db_folder "./persist"

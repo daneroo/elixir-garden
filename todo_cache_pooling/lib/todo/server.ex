@@ -1,4 +1,5 @@
 defmodule Todo.Server do
+  @moduledoc false
   use GenServer
 
   def start(name) do

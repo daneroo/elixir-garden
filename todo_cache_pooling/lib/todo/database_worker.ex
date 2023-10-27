@@ -1,4 +1,5 @@
 defmodule Todo.DatabaseWorker do
+  @moduledoc false
   use GenServer
 
   def start(db_folder) do

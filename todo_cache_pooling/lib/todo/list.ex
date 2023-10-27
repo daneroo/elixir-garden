@@ -1,4 +1,5 @@
 defmodule Todo.List do
+  @moduledoc false
   defstruct auto_id: 1, entries: %{}
 
   def new(entries \\ []) do

@@ -1,4 +1,5 @@
 defmodule Todo.Cache do
+  @moduledoc false
   use GenServer
 
   def start do

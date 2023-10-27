@@ -5,6 +5,8 @@
 # Note: the +P 2000000 sets maximum number of processes to 2 million
 
 defmodule LoadTest do
+  @moduledoc false
+
   @total_processes 10_000
   @interval_size 1_000
 
