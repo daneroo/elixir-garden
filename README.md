@@ -24,6 +24,9 @@ See Obsidian for learning plan
 
 ```sh
 brew install elixir
+# Elixir: To get proper :observer.start to work
+brew reinstall --build-from-source wxwidgets
+
 
 ❯ elixir -v
 Erlang/OTP 26 [erts-14.0.2] [source] [64-bit] [smp:10:10] [ds:10:10:10] [async-threads:1] [jit] [dtrace]
