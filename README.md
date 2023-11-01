@@ -16,6 +16,18 @@ See Obsidian for learning plan
 - [ ] simple cluster, w/linux and MacOS
   - [ ] Phoenix LiveView for monitoring
 
+## Sub Project setup
+
+When you `mix new`: if you want linter support add this dependency to `mix.exs`:
+
+```elixir
+  defp deps do
+    [
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+    ]
+  end
+```
+
 ## Setup
 
 - [VSCode ElixirLS extension](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls)
@@ -37,6 +49,10 @@ Elixir 1.15.7 (compiled with Erlang/OTP 26)
 
 Also see Obsidian (for learning plan)
 
+- Programming Elixir ≥ 1.6, Dave Thomas, support repos
+  - programming-elixir: <https://github.com/herminiotorres/programming-elixir>
+  - elixir-exercises: <https://github.com/carlos4ndre/elixir-exercises>
+  - programming-elixir-exercises: <https://github.com/pcewing/programming-elixir-exercises>
 - [My O'Reilly Elixir Playlist](https://learning.oreilly.com/playlists/996eb216-4907-4b09-94f3-c2113a506152/)
 - [Elixir School](https://elixirschool.com/en/)
   - [Podcast](https://elixirschool.com/en/podcasts)
