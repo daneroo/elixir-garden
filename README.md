@@ -18,7 +18,8 @@ See Obsidian for learning plan
 
 ## Sub Project setup
 
-When you `mix new`: if you want linter support add this dependency to `mix.exs`:
+When you `mix new`: if you want linter support add this dependency to `mix.exs`.
+You should also do `mix deps.get`.
 
 ```elixir
   defp deps do
