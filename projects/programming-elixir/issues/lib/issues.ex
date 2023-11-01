@@ -1,18 +1,5 @@
 defmodule Issues do
   @moduledoc """
-  Documentation for `Issues`.
+  Documentation for dumm module Issues (now empty).
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Issues.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end

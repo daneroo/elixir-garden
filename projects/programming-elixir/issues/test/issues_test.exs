@@ -1,8 +1,9 @@
 defmodule IssuesTest do
+  @moduledoc false
   use ExUnit.Case
-  doctest Issues
+  doctest Issues.Case
 
-  test "greets the world" do
-    assert Issues.hello() == :world
+  test "the truth" do
+    assert 1 + 1 == 2
   end
 end
