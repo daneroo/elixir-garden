@@ -9,16 +9,16 @@ defmodule Issues.CLI do
   the various functions that end up generating a
   table of the last _n_ issues in a github project
   e.g.:
-    iex -S mix run -e 'Issues.CLI.run(["-h"])'
-    iex -S mix run -e 'Issues.CLI.run(["--help"])'
-    iex -S mix run -e 'Issues.CLI.run(["elixir-lang", "elixir"])'
-    Issues.CLI.run(["elixir-lang", "elixir"])
-    Issues.CLI.run(["elixir-lang", "elixir", "3"])
-    Issues.CLI.run(["daneroo", "elixir-garden", "3"])
+    iex -S mix run -e 'Issues.CLI.main(["-h"])'
+    iex -S mix run -e 'Issues.CLI.main(["--help"])'
+    iex -S mix run -e 'Issues.CLI.main(["elixir-lang", "elixir"])'
+    Issues.CLI.main(["elixir-lang", "elixir"])
+    Issues.CLI.main(["elixir-lang", "elixir", "3"])
+    Issues.CLI.main(["daneroo", "elixir-garden", "3"])
 
   """
 
-  def run(argv) do
+  def main(argv) do
     argv
     |> parse_args
     |> process
