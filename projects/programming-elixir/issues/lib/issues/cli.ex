@@ -1,6 +1,6 @@
 defmodule Issues.CLI do
   use ExUnit.Case
-  doctest Issues
+  # doctest Issues
 
   @default_count 4
 
@@ -13,8 +13,7 @@ defmodule Issues.CLI do
   def run(argv) do
     argv
     |> parse_args
-
-    # |> process
+    |> process
   end
 
   @doc """
@@ -40,20 +39,20 @@ defmodule Issues.CLI do
     end
   end
 
-  # def process(:help) do
-  #   IO.puts("""
-  #   usage:  issues <user> <project> [ count | #{@default_count} ]
-  #   """)
+  def process(:help) do
+    IO.puts("""
+    usage:  issues <user> <project> [ count | #{@default_count} ]
+    """)
 
-  #   System.halt(0)
-  # end
+    System.halt(0)
+  end
 
-  # def process({user, project, _count}) do
-  #   Issues.GithubIssues.fetch(user, project)
-  #   |> decode_response
-  #   |> convert_to_list_of_hashdicts
-  #   |> sort_into_ascending_order
-  # end
+  def process({user, project, _count}) do
+    Issues.GithubIssues.fetch(user, project)
+    # |> decode_response
+    # |> convert_to_list_of_hashdicts
+    # |> sort_into_ascending_order
+  end
 
   # def decode_response({:ok, body}), do: body
 
