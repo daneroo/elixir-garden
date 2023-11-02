@@ -3,7 +3,7 @@ defmodule CliTest do
   use ExUnit.Case
 
   import Issues.CLI,
-    only: [parse_args: 1, sort_into_ascending_order: 1]
+    only: [parse_args: 1, sort_into_descending_order: 1]
 
   test ":help returned by option parsing with -h and --help options" do
     assert parse_args(["-h", "anything"]) == :help
@@ -18,10 +18,10 @@ defmodule CliTest do
     assert parse_args(["user", "project"]) == {"user", "project", 4}
   end
 
-  test "sort ascending orders the correct way" do
-    result = sort_into_ascending_order(fake_created_at_list(["c", "a", "b"]))
+  test "sort descending orders the correct way" do
+    result = sort_into_descending_order(fake_created_at_list(["c", "a", "b"]))
     issues = for issue <- result, do: issue["created_at"]
-    assert issues == ~w(a b c)
+    assert issues == ~w(c b a)
   end
 
   defp fake_created_at_list(values) do
