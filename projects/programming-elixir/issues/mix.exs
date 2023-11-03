@@ -23,6 +23,7 @@ defmodule Issues.MixProject do
   defp deps do
     [
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:httpoison, "~> 2.1"},
       {:jason, "~> 1.4"}
       # {:dep_from_hexpm, "~> 0.3.0"},

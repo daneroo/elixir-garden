@@ -23,4 +23,8 @@ mix escript.build
 ./issues elixir-lang elixir
 ./issues elixir-lang elixir 10
 ./issues daneroo elixir-garden
+
+# documentation
+mix docs
+open doc/index.html
 ```

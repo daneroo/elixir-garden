@@ -1,4 +1,6 @@
 defmodule Issues.GithubIssues do
+  require Logger
+
   @user_agent [{"User-agent", "Elixir dave@pragprog.com"}]
   # Replaced @github_url with private runtime function
   # @github_url Application.get_env(:issues, :github_url)
@@ -10,6 +12,8 @@ defmodule Issues.GithubIssues do
   """
 
   def fetch(user, project) do
+    Logger.info("Fetching #{user}/#{project}")
+
     issues_url(user, project)
     |> HTTPoison.get(@user_agent)
     |> handle_response
@@ -25,17 +29,21 @@ defmodule Issues.GithubIssues do
 
   # replace def handle_response(%{status_code: 200, body: body}) do
   def handle_response({:ok, %{status_code: 200, body: body}}) do
-    # {:ok, :jsx.decode(body)}
+    Logger.info("Got response: status code: 200")
+    Logger.debug("Got response: body:#{body}")
     {:ok, Jason.decode!(body)}
   end
 
   # replace def handle_response(%{status_code: _, body: body}) do
-  def handle_response({:ok, %{status_code: _, body: body}}) do
-    # {:error, :jsx.decode(body)}
+  def handle_response({:ok, %{status_code: status_code, body: body}}) do
+    Logger.warn("Got response: status code: #{status_code}")
+    Logger.debug("Got response: body:#{body}")
+
     {:error, Jason.decode!(body)}
   end
 
   def handle_response({:error, reason}) do
+    Logger.error("Got response: error: #{inspect(reason)}")
     {:error, reason}
   end
 end
