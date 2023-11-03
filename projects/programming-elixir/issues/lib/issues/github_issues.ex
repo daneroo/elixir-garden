@@ -36,7 +36,7 @@ defmodule Issues.GithubIssues do
 
   # replace def handle_response(%{status_code: _, body: body}) do
   def handle_response({:ok, %{status_code: status_code, body: body}}) do
-    Logger.warn("Got response: status code: #{status_code}")
+    Logger.warning("Got response: status code: #{status_code}")
     Logger.debug("Got response: body:#{body}")
 
     {:error, Jason.decode!(body)}
