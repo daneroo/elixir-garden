@@ -24,7 +24,10 @@ defmodule Goodreads.MixProject do
     [
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
-      {:httpoison, "~> 2.1"}
+      {:httpoison, "~> 2.1"},
+      {:sweet_xml, "~> 0.7.4"},
+      # for parsing RFC822 dates in the feed
+      {:timex, "~> 3.0"}
       # {:jason, "~> 1.4"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}

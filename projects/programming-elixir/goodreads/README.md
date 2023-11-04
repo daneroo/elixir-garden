@@ -8,7 +8,8 @@ I replaced the NOAA xml parsing exercise with my own goodreads feed
 
 ```bash
 # compile then run
-mix do compile, run -e "Goodreads.main([])"
+mix do compile, run -e 'Goodreads.main(["-h"])'
+mix do compile, run -e 'Goodreads.main(["-s","read"])'
 
 # lint
 mix credo --strict

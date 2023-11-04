@@ -21,6 +21,8 @@ See Obsidian for learning plan
 When you `mix new`: if you want linter support add this dependency to `mix.exs`.
 You should also do `mix deps.get`.
 
+For linting; `mix credo gen.config` and then edit `.credo.exs` to your liking. (I don't like that)
+
 ```elixir
   defp deps do
     [

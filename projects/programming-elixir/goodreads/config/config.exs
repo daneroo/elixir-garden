@@ -1,7 +1,7 @@
 import Config
 
 config :goodreads,
-  feed_token: "XXXXXXXXXXX"
+  goodreads_user: "6883912"
 
 config :logger,
   compile_time_purge_matching: [
