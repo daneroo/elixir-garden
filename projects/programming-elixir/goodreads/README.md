@@ -4,6 +4,14 @@ Ch 13 - Your Turn - Goodreads
 
 I replaced the NOAA xml parsing exercise with my own goodreads feed
 
+## TODO
+
+Just ideas
+
+- [ ] Add tests
+- [ ] Filtering and ordering?
+- [ ] Make it streaming?; page -> items -> print
+
 ## Operation
 
 ```bash

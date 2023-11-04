@@ -66,23 +66,39 @@ defmodule Goodreads do
   end
 
   def process({:shelf, shelf}), do: process_page({:shelf, shelf})
-
   def process({:error, :invalid_shelf}), do: IO.puts("Error: Invalid shelf provided.")
   def process(_), do: IO.puts("Error: Invalid arguments.")
 
   def pretty_print(%{title: title, description: _description, link: link, items: items}) do
-    IO.puts("Goodreads Feed (page 1)")
     IO.puts("  #{title} (#{link})")
-
     Enum.each(items, &pretty_print_item/1)
   end
 
+  # recursive page iteration until no more items
   def process_page({:shelf, shelf}, page \\ 1) do
-    Logger.info("Fetching Goodreads feed: #{feed_url(shelf, page)} shelf:#{shelf}")
+    # safety measure for recursion
+    max_pages = 20
 
-    HTTPoison.get!(feed_url(shelf, page))
-    |> parse_feed()
-    |> pretty_print()
+    # This was simpler before recursion
+    # HTTPoison.get!(feed_url(shelf, page))
+    # |> parse_feed()
+    # |> pretty_print()
+
+    feed_data =
+      HTTPoison.get!(feed_url(shelf, page))
+      |> parse_feed()
+
+    Logger.debug(
+      "Fetching Goodreads feed: #{feed_url(shelf, page)} shelf:#{shelf} page:#{page} has #{length(feed_data.items)} items"
+    )
+
+    if page > max_pages or Enum.empty?(feed_data.items) do
+      Logger.debug("No more items to fetch, stopping at page: #{page}")
+      :done
+    else
+      feed_data |> pretty_print()
+      process_page({:shelf, shelf}, page + 1)
+    end
   end
 
   def pretty_print_item(%{title: title, author_name: author_name, user_read_at: nil}) do
