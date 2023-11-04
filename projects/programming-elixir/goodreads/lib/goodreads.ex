@@ -65,14 +65,7 @@ defmodule Goodreads do
     """)
   end
 
-  def process({:shelf, shelf}) do
-    page = 1
-    Logger.info("Fetching Goodreads feed: #{feed_url(shelf, page)} shelf:#{shelf}")
-
-    HTTPoison.get!(feed_url(shelf, page))
-    |> parse_feed()
-    |> pretty_print()
-  end
+  def process({:shelf, shelf}), do: process_page({:shelf, shelf})
 
   def process({:error, :invalid_shelf}), do: IO.puts("Error: Invalid shelf provided.")
   def process(_), do: IO.puts("Error: Invalid arguments.")
@@ -82,6 +75,14 @@ defmodule Goodreads do
     IO.puts("  #{title} (#{link})")
 
     Enum.each(items, &pretty_print_item/1)
+  end
+
+  def process_page({:shelf, shelf}, page \\ 1) do
+    Logger.info("Fetching Goodreads feed: #{feed_url(shelf, page)} shelf:#{shelf}")
+
+    HTTPoison.get!(feed_url(shelf, page))
+    |> parse_feed()
+    |> pretty_print()
   end
 
   def pretty_print_item(%{title: title, author_name: author_name, user_read_at: nil}) do
