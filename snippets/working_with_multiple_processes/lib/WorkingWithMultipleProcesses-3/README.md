@@ -1,6 +1,8 @@
 # Exercise: WorkingWithMultipleProcesses-3
 
-Use _spawn_link_ to start a process, and have that process send a message to the parent and then exit immediately. Meanwhile, sleep for 500 ms in the parent, then receive as many messages as are waiting. Trace what you receive. Does it matter that you weren't waiting for the notification from the child when it exited?
+Use _spawn_link_ to start a process, and have that process send a message to the parent and then exit immediately. Meanwhile, sleep for 500 ms in the parent, then receive as many messages as are waiting. Trace what you receive.
+
+Does it matter that you weren't waiting for the notification from the child when it exited? **No!**
 
 ## Solution
 
