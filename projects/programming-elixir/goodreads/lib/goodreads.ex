@@ -7,22 +7,12 @@ defmodule Goodreads do
   @default_shelf "#ALL#"
   @shelves ["#ALL#", "read", "currently-reading", "to-read", "on-deck"]
 
-  # const URI = `https://www.goodreads.com/review/list_rss/${GOODREADS_USER}`;
-  # const shelves = ["#ALL#", "read", "currently-reading", "to-read", "on-deck"];
-  # page is "1" indexed
-  # key seems optional
-  # const asXML = await fetcherXML(URI, { key: GOODREADS_KEY, shelf, page });
-  # https://www.goodreads.com/review/list_rss/6883912?shelf=%23ALL%23
-
   @moduledoc """
   Documentation for `Goodreads`.
   """
 
   @doc """
   Goodreads feed fetch.
-
-  ## Examples
-      iex> Goodreads.main([])
   """
   def main(argv) do
     argv
@@ -57,12 +47,17 @@ defmodule Goodreads do
     end
   end
 
-  # Define a process function to handle the parsed arguments
+  @doc """
+  process for show help args
+
+  """
+  @help_output """
+  usage:
+    goodreads -h|--help
+    goodreads [--shelf|-s <shelf>] where shelf is one of #ALL#, read, currently-reading, to-read, on-deck
+  """
   def process(:help) do
-    IO.puts("""
-    usage:  goodreads -h|--help
-            goodreads [--shelf|-s <shelf>] where shelf is one of #{Enum.join(@shelves, ", ")}
-    """)
+    IO.puts(@help_output)
   end
 
   def process({:shelf, shelf}), do: process_page({:shelf, shelf})
@@ -165,6 +160,21 @@ defmodule Goodreads do
     end
   end
 
+  @doc """
+  Generates a complete Goodreads feed URL with the given shelf and page parameters.
+
+  ## Examples
+
+      iex> Goodreads.feed_url()
+      "https://www.goodreads.com/review/list_rss/6883912?shelf=%23ALL%23&page=1"
+
+      iex> Goodreads.feed_url("read", 1)
+      "https://www.goodreads.com/review/list_rss/6883912?shelf=read&page=1"
+
+      iex> Goodreads.feed_url("#ALL#", 2)
+      "https://www.goodreads.com/review/list_rss/6883912?shelf=%23ALL%23&page=2"
+
+  """
   def feed_url(shelf \\ "#ALL#", page \\ 1) do
     goodreads_user = Application.fetch_env!(:goodreads, :goodreads_user)
     # baseURI already has trailing slash

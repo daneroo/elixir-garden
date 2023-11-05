@@ -1,6 +1,6 @@
 defmodule GoodreadsTest do
   use ExUnit.Case
-  # doctest Goodreads
+  doctest Goodreads
 
   test "should return URL with base URI, and numeric path (user) and default params" do
     url = Goodreads.feed_url()
@@ -18,7 +18,7 @@ defmodule GoodreadsTest do
   end
 
   # Define the data for your tests
-  @shelves ["read", "#ALL"]
+  @shelves ["read", "#ALL#"]
   @pages [1, 2]
   # Iterate over the data to generate tests
   for shelf <- @shelves, page <- @pages do
