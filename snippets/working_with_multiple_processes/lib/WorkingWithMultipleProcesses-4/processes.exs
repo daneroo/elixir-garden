@@ -25,6 +25,7 @@ defmodule Processes do
   def child(parent) do
     IO.puts("Child process started. Sending message to parent.")
     send(parent, "Hello!")
-    IO.puts("Child process about to exit.")
+    IO.puts("Child process about to raise an Error.")
+    raise RuntimeError
   end
 end
