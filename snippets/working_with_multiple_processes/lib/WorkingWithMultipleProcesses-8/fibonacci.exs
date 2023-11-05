@@ -1,6 +1,7 @@
 defmodule FibSolver do
   @moduledoc false
   def fib(scheduler) do
+    # IO.puts("FibSolver is ready")
     send(scheduler, {:ready, self()})
 
     receive do
@@ -9,6 +10,7 @@ defmodule FibSolver do
         fib(scheduler)
 
       {:shutdown} ->
+        # IO.puts("FibSolver is done")
         exit(:normal)
     end
   end
@@ -27,6 +29,10 @@ defmodule Scheduler do
   end
 
   defp schedule_processes(processes, queue, results) do
+    # IO.puts(
+    #   "processes: #{length(processes)} |queue|: #{length(queue)} results: #{length(results)}}"
+    # )
+
     receive do
       # {:ready, pid} when queue! = [] ->
       {:ready, pid} when length(queue) > 0 ->
@@ -53,19 +59,26 @@ defmodule Runner do
   @moduledoc false
   def run do
     # a bit larger than my cpu count (which is 10)
-    max_processes = 15
+    max_processes = 12
 
     # at least 37 for timing to be meaningful
-    fibonaci_size_that_matters = 37
+    fibonaci_size_that_matters = 39
     how_many_times = 20
 
     to_process = List.duplicate(fibonaci_size_that_matters, how_many_times)
 
+    # Print Running parameters; max_processes, how_many_times, fibonaci_size_that_matters
+    IO.puts(
+      "Calculating fibonaci number (#{fibonaci_size_that_matters}) #{length(to_process)} times"
+    )
+
+    IO.puts("Timing with 1..#{max_processes} processes")
+
     Enum.each(1..max_processes, fn num_processes ->
-      {time, result} = :timer.tc(Scheduler, :run, [num_processes, FibSolver, :fib, to_process])
+      {time, _result} = :timer.tc(Scheduler, :run, [num_processes, FibSolver, :fib, to_process])
 
       if num_processes == 1 do
-        IO.puts(inspect(result))
+        # IO.puts(inspect(result))
         IO.puts("\n #   time (s)")
       end
 
