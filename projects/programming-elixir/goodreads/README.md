@@ -8,7 +8,7 @@ I replaced the NOAA xml parsing exercise with my own goodreads feed
 
 Just ideas
 
-- [ ] Add tests
+- [ ] Add tests - how do I mock the xml?
 - [ ] Filtering and ordering?
 - [ ] Make it streaming?; page -> items -> print
 

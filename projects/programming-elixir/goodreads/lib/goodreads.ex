@@ -165,7 +165,7 @@ defmodule Goodreads do
     end
   end
 
-  def feed_url(shelf, page) do
+  def feed_url(shelf \\ "#ALL#", page \\ 1) do
     goodreads_user = Application.fetch_env!(:goodreads, :goodreads_user)
     # baseURI already has trailing slash
     params = URI.encode_query(%{shelf: shelf, page: page})
