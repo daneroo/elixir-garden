@@ -30,3 +30,18 @@ When running the version where the child does throw, we see the child die; howev
 cd lib/WorkingWithMultipleProcesses-5/
 elixir -r processes_raise.exs  -e 'Processes.run()'
 ```
+
+```txt
+Starting parent process.
+Parent process sleeping for 1 second.
+Child process started. Sending message to parent.
+Child process about to raise an Error.
+
+15:49:05.256 [error] Process #PID<0.104.0> raised an exception
+** (RuntimeError) runtime error
+    processes_raise.exs:42: Processes.child/1
+Parent process receive all.
+Message: Hello!
+Process #PID<0.104.0> died abnormally with reason {%RuntimeError{message: "runtime error"}, [{Processes, :child, 1, [file: ~c"processes_raise.exs", line: 42, error_info: %{module: Exception}]}]}.
+All messages received.
+```
