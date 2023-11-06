@@ -3,7 +3,7 @@ defmodule WorkingWithMultipleProcesses.MixProject do
 
   def project do
     [
-      app: :working_with_multiple_processes,
+      app: :programming_elixir_exercises,
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
