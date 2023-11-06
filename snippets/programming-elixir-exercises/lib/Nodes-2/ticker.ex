@@ -26,9 +26,9 @@ defmodule Ticker do
         Enum.with_index(clients)
         |> Enum.each(fn {client, index} ->
           # this variant sends to all clients
-          should_send = true
+          # should_send = true
           # this variant sends to every client, but in turn
-          # should_send = rem(counter, length(clients)) == index
+          should_send = rem(counter, length(clients)) == index
 
           if should_send do
             IO.puts("server:sending to client number #{index} #{inspect(client)}")

@@ -2,26 +2,10 @@
 
 ```bash
 cd lib/Nodes-2/
-# not working
-elixir -r ticker.ex  -e 'Ticker.start()'
-```
-
-```bash
-# on 1st shell
-iex --sname one
-c("ticker.ex")
-
-# on 2nd shell
-iex --sname two
-c("ticker.ex")
-
-# back on 1st shell
-Node.connect(:"two@galois")
-Ticker.start()
-Client.start()
-
-# back on 2nd shell
-Client.start()
+iex --sname one -e 'Code.compile_file("ticker.ex"); Ticker.start(); Client.start()'
+# sleep1 second so Node.connect can complete
+iex --sname two -e 'Code.compile_file("ticker.ex"); Node.connect(:"one@galois"); :timer.sleep(1000); Client.start()'
+iex --sname three -e 'Code.compile_file("ticker.ex"); Node.connect(:"one@galois"); :timer.sleep(1000); Client.start()'
 ```
 
 ```txt
