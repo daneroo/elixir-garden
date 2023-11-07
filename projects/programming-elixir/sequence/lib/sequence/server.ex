@@ -5,6 +5,10 @@ defmodule Sequence.Server do
     {:ok, initial_number}
   end
 
+  def handle_cast({:increment_number, delta}, current_number) do
+    {:noreply, current_number + delta}
+  end
+
   def handle_call(:next_number, _from, current_number) do
     {:reply, current_number, current_number + 1}
   end
@@ -13,7 +17,6 @@ defmodule Sequence.Server do
     {:reply, new_number, new_number}
   end
 
-  # does not return state???
   def handle_call({:factors_number, number}, _, current_number) do
     {:reply, {:factors_of, number, factors(number)}, current_number}
   end

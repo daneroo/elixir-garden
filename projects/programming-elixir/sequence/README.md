@@ -12,6 +12,7 @@ Sequence.Server.factors(9973)
 
 {:ok, pid} = GenServer.start_link(Sequence.Server,100)
 GenServer.call(pid,:next_number)
+GenServer.cast(pid,{:increment_number,5})
 GenServer.call(pid,{:set_number,999})
 GenServer.call(pid,{:factors_number,9973})
 ```
