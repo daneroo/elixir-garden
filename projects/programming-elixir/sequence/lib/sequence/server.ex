@@ -1,4 +1,5 @@
 defmodule Sequence.Server do
+  @moduledoc false
   use GenServer
 
   def init(initial_number) do
