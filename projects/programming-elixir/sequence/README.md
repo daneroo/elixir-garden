@@ -7,7 +7,6 @@ First OTP example in Programming Elixir 1.6 by Dave Thomas.
 ```bash
 $ iex -S mix
 
-Sequence.Server.start_link(100)
 Sequence.Server.next_number()
 Sequence.Server.increment_number(5)
 Sequence.Server.next_number()
