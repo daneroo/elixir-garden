@@ -7,7 +7,10 @@ Stack OTP example in Programming Elixir 1.6 by Dave Thomas.
 ```bash
 $ iex -S mix
 
-{:ok, pid} = GenServer.start_link(Stack.Server,["cat",3,2,1])
-GenServer.call(pid, :pop)
-GenServer.cast(pid, {:push, 42})
+Stack.Server.start_link([1,2,3])
+
+Stack.Server.pop()
+Stack.Server.push(42)
+Stack.Server.pop()
+
 ```
