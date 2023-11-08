@@ -2,6 +2,25 @@ defmodule Sequence.Server do
   @moduledoc false
   use GenServer
 
+  #### External API ####
+
+  def start_link(initial_number) do
+    GenServer.start_link(__MODULE__, initial_number, name: __MODULE__)
+  end
+
+  def next_number() do
+    GenServer.call(__MODULE__, :next_number)
+  end
+
+  def set_number(new_number) do
+    GenServer.call(__MODULE__, {:set_number, new_number})
+  end
+
+  def increment_number(delta) do
+    GenServer.cast(__MODULE__, {:increment_number, delta})
+  end
+
+  #### GenServer callbacks ####
   def init(initial_number) do
     {:ok, initial_number}
   end

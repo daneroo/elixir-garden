@@ -7,14 +7,17 @@ First OTP example in Programming Elixir 1.6 by Dave Thomas.
 ```bash
 $ iex -S mix
 
+Sequence.Server.start_link(100)
+Sequence.Server.next_number()
+Sequence.Server.increment_number(5)
+Sequence.Server.next_number()
+Sequence.Server.set_number(999)
+Sequence.Server.next_number()
+Sequence.Server.next_number()
+
 Sequence.Server.factors(12)
 Sequence.Server.factors(9973)
 
-{:ok, pid} = GenServer.start_link(Sequence.Server,100)
-GenServer.call(pid,:next_number)
-GenServer.cast(pid,{:increment_number,5})
-GenServer.call(pid,{:set_number,999})
-GenServer.call(pid,{:factors_number,9973})
 
 # debug exercises
 {:ok, pid} = GenServer.start_link(Sequence.Server,100,[debug: [:trace]])
