@@ -17,6 +17,9 @@ Sequence.Server.next_number()
 Sequence.Server.factors(12)
 Sequence.Server.factors(9973)
 
+# force a crash, see the Stash working
+Sequence.Server.increment_number("cat")
+
 
 # debug exercises
 {:ok, pid} = GenServer.start_link(Sequence.Server,100,[debug: [:trace]])
