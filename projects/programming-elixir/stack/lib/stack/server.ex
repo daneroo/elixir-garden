@@ -4,8 +4,8 @@ defmodule Stack.Server do
 
   #### External API ####
 
-  def start_link(initial_number) do
-    GenServer.start_link(__MODULE__, initial_number, name: __MODULE__)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def pop() do
@@ -18,8 +18,9 @@ defmodule Stack.Server do
 
   #### GenServer Callbacks ####
 
-  def init(initial_stack) do
-    {:ok, initial_stack}
+  def init(_) do
+    IO.puts("Stack.Server init |#{inspect(Stack.Stash.get())}|")
+    {:ok, Stack.Stash.get()}
   end
 
   # What to do when empty?
@@ -33,5 +34,7 @@ defmodule Stack.Server do
 
   def terminate(reason, state) do
     IO.puts("Reason: #{inspect(reason)}; State: #{inspect(state)}")
+    IO.puts("Stack.Server terminated, stashins state: #{inspect(state)}")
+    Stack.Stash.update(state)
   end
 end
