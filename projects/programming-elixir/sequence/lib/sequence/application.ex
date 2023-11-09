@@ -6,10 +6,10 @@ defmodule Sequence.Application do
   use Application
 
   @impl true
-  def start(_type, _args) do
+  def start(_type, initial_number) do
     children = [
       # Starts a worker by calling: Sequence.Worker.start_link(arg)
-      {Sequence.Stash, 99},
+      {Sequence.Stash, initial_number},
       {Sequence.Server, nil}
     ]
 
