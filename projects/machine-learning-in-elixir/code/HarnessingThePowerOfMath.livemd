@@ -1,0 +1,543 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Harnessing the Power of Math
+
+```elixir
+Mix.install([
+  {:nx, "~> 0.5"},
+  {:exla, "~> 0.5"},
+  {:kino, "~> 0.8"},
+  {:stb_image, "~> 0.6"},
+  {:vega_lite, "~> 0.1"},
+  {:kino_vega_lite, "~> 0.1"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Resolving Hex dependencies...
+Resolution completed in 0.281s
+New:
+  cc_precompiler 0.1.6
+  complex 0.5.0
+  elixir_make 0.7.5
+  exla 0.5.1
+  kino 0.8.1
+  kino_vega_lite 0.1.7
+  nx 0.5.1
+  stb_image 0.6.0
+  table 0.1.2
+  telemetry 1.2.1
+  vega_lite 0.1.6
+  xla 0.4.4
+* Getting nx (Hex package)
+* Getting exla (Hex package)
+* Getting kino (Hex package)
+* Getting stb_image (Hex package)
+* Getting vega_lite (Hex package)
+* Getting kino_vega_lite (Hex package)
+* Getting table (Hex package)
+* Getting cc_precompiler (Hex package)
+* Getting elixir_make (Hex package)
+* Getting telemetry (Hex package)
+* Getting xla (Hex package)
+* Getting complex (Hex package)
+==> table
+Compiling 5 files (.ex)
+Generated table app
+==> vega_lite
+Compiling 5 files (.ex)
+Generated vega_lite app
+===> Analyzing applications...
+===> Compiling telemetry
+==> complex
+Compiling 2 files (.ex)
+Generated complex app
+==> nx
+Compiling 31 files (.ex)
+Generated nx app
+==> kino
+Compiling 37 files (.ex)
+Generated kino app
+==> kino_vega_lite
+Compiling 4 files (.ex)
+Generated kino_vega_lite app
+==> elixir_make
+Compiling 6 files (.ex)
+Generated elixir_make app
+==> cc_precompiler
+Compiling 3 files (.ex)
+Generated cc_precompiler app
+==> stb_image
+Compiling 2 files (.ex)
+Generated stb_image app
+==> xla
+Compiling 2 files (.ex)
+Generated xla app
+==> exla
+Unpacking /Users/sean/Library/Caches/xla/0.4.4/cache/download/xla_extension-aarch64-darwin-cpu.tar.gz into /Users/sean/Library/Caches/mix/installs/elixir-1.14.2-erts-13.0.2/d6314bb9044da3eed737e89eacdf2f1a/deps/exla/cache
+Using libexla.so from /Users/sean/Library/Caches/xla/exla/elixir-1.14.2-erts-13.0.2-xla-0.4.4-exla-0.5.1-44u5ai52odx7l3gshk4r67yj4y/libexla.so
+Compiling 21 files (.ex)
+Generated exla app
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Speaking the Language of Data
+
+```elixir
+Nx.default_backend(EXLA.Backend)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{Nx.BinaryBackend, []}
+```
+
+### The Building Blocks of Linear Algebra
+
+```elixir
+a = Nx.tensor([1, 2, 3])
+b = Nx.tensor([4.0, 5.0, 6.0])
+c = Nx.tensor([1, 0, 1], type: {:u, 8})
+IO.inspect(a, label: :a)
+IO.inspect(b, label: :b)
+IO.inspect(c, label: :c)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+09:55:19.789 [info] TfrtCpuClient created.
+a: #Nx.Tensor<
+  s64[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177337>
+  [1, 2, 3]
+>
+b: #Nx.Tensor<
+  f32[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177338>
+  [4.0, 5.0, 6.0]
+>
+c: #Nx.Tensor<
+  u8[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959576.177361>
+  [1, 0, 1]
+>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  u8[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959576.177361>
+  [1, 0, 1]
+>
+```
+
+```elixir
+goog_current_price = 2677.32
+goog_pe = 23.86
+goog_mkt_cap = 1760
+goog = Nx.tensor([goog_current_price, goog_pe, goog_mkt_cap])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177341>
+  [2677.320068359375, 23.860000610351562, 1760.0]
+>
+```
+
+```elixir
+i_am_a_scalar = Nx.tensor(5)
+i_am_also_a_scalar = 5
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+5
+```
+
+```elixir
+goog_current_price = 2677.32
+goog_pe = 23.86
+goog_mkt_cap = 1760
+
+meta_current_price = 133.93
+meta_pe = 11.10
+meta_mkt_cap = 360
+
+stocks_matrix =
+  Nx.tensor([
+    [goog_current_price, goog_pe, goog_mkt_cap],
+    [meta_current_price, meta_pe, meta_mkt_cap]
+  ])
+
+IO.inspect(stocks_matrix)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[2][3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177343>
+  [
+    [2677.320068359375, 23.860000610351562, 1760.0],
+    [133.92999267578125, 11.100000381469727, 360.0]
+  ]
+>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[2][3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177343>
+  [
+    [2677.320068359375, 23.860000610351562, 1760.0],
+    [133.92999267578125, 11.100000381469727, 360.0]
+  ]
+>
+```
+
+### Important Operations in Linear Algebra
+
+#### Vector Addition
+
+```elixir
+sales_day_1 = Nx.tensor([32, 10, 14])
+sales_day_2 = Nx.tensor([10, 24, 21])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  s64[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959581.177345>
+  [10, 24, 21]
+>
+```
+
+```elixir
+total_sales = Nx.add(sales_day_1, sales_day_2)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  s64[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959571.177239>
+  [42, 34, 35]
+>
+```
+
+#### Scalar Multiplication
+
+```elixir
+sales_day_1 = Nx.tensor([32, 10, 14])
+sales_day_2 = Nx.tensor([10, 24, 21])
+total_sales = Nx.add(sales_day_1, sales_day_2)
+
+keep_rate = 0.9
+unreturned_sales = Nx.multiply(keep_rate, total_sales)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959571.177242>
+  [37.79999923706055, 30.599998474121094, 31.5]
+>
+```
+
+```elixir
+price_per_product = Nx.tensor([9.95, 10.95, 5.99])
+revenue_per_product = Nx.multiply(unreturned_sales, price_per_product)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[3]
+  EXLA.Backend<host:0, 0.4016582075.3255959571.177244>
+  [376.1099853515625, 335.0699768066406, 188.68499755859375]
+>
+```
+
+#### Transpose
+
+```elixir
+sales_matrix =
+  Nx.tensor([
+    [32, 10, 14],
+    [10, 24, 21]
+  ])
+
+Nx.transpose(sales_matrix)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  s64[3][2]
+  EXLA.Backend<host:0, 0.4016582075.3255959571.177246>
+  [
+    [32, 10],
+    [10, 24],
+    [14, 21]
+  ]
+>
+```
+
+#### Linear Transformation
+
+```elixir
+invert_color_channels =
+  Nx.tensor([
+    [-1, 0, 0],
+    [0, -1, 0],
+    [0, 0, -1]
+  ])
+
+"Cat.jpg"
+|> StbImage.read_file!()
+|> StbImage.resize(256, 256)
+|> StbImage.to_nx()
+|> Nx.dot(invert_color_channels)
+|> Nx.as_type({:u, 8})
+|> Kino.Image.new()
+```
+
+```elixir
+vector = Nx.dot(Nx.tensor([1, 2, 3]), Nx.tensor([1, 2, 3]))
+vector_matrix = Nx.dot(Nx.tensor([1, 2]), Nx.tensor([[1], [2]]))
+matrix_matrix = Nx.dot(Nx.tensor([[1, 2]]), Nx.tensor([[3], [4]]))
+
+vector |> IO.inspect(label: :vector)
+vector_matrix |> IO.inspect(label: :vector_matrix)
+matrix_matrix |> IO.inspect(label: :matrix_matrix)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+vector: #Nx.Tensor<
+  s64
+  14
+>
+vector_matrix: #Nx.Tensor<
+  s64[1]
+  [5]
+>
+matrix_matrix: #Nx.Tensor<
+  s64[1][1]
+  [
+    [11]
+  ]
+>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  s64[1][1]
+  [
+    [11]
+  ]
+>
+```
+
+## Thinking Probabilistically
+
+### Reasoning About Uncertainty
+
+```elixir
+simulation = fn key ->
+  {value, key} = Nx.Random.uniform(key)
+  if Nx.to_number(value) < 0.5, do: {0, key}, else: {1, key}
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Function<42.3316493/1 in :erl_eval.expr/6>
+```
+
+```elixir
+key = Nx.Random.key(42)
+
+for n <- [10, 100, 1000, 10000] do
+  Enum.map_reduce(1..n, key, fn _, key -> simulation.(key) end)
+  |> elem(0)
+  |> Enum.sum()
+  |> IO.inspect()
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+6
+49
+501
+5025
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[6, 49, 501, 5025]
+```
+
+## Tracking Change
+
+### Understanding Differentiation
+
+```elixir
+defmodule BerryFarm do
+  import Nx.Defn
+
+  defn profits(trees) do
+    -((trees - 1) ** 4) + trees ** 3 + trees ** 2
+  end
+
+  defn profits_derivative(trees) do
+    grad(trees, &profits/1)
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, BerryFarm, <<70, 79, 82, 49, 0, 0, 12, ...>>, true}
+```
+
+```elixir
+trees = Nx.linspace(0, 4, n: 100)
+profits = BerryFarm.profits(trees)
+
+alias VegaLite, as: Vl
+
+Vl.new(title: "Berry Profits", width: 1440, height: 1080)
+|> Vl.data_from_values(%{
+  trees: Nx.to_flat_list(trees),
+  profits: Nx.to_flat_list(profits)
+})
+|> Vl.mark(:line, interpolate: :basis)
+|> Vl.encode_field(:x, "trees", type: :quantitative)
+|> Vl.encode_field(:y, "profits", type: :quantitative)
+```
+
+```elixir
+trees = Nx.linspace(0, 4, n: 100)
+profits = BerryFarm.profits(trees)
+profits_derivative = BerryFarm.profits_derivative(trees)
+
+alias VegaLite, as: Vl
+
+Vl.new(title: "Berry Profits and Profits Rate of Change", width: 1440, height: 1080)
+|> Vl.data_from_values(%{
+  trees: Nx.to_flat_list(trees),
+  profits: Nx.to_flat_list(profits),
+  profits_derivative: Nx.to_flat_list(profits_derivative)
+})
+|> Vl.layers([
+  Vl.new()
+  |> Vl.mark(:line, interpolate: :basis)
+  |> Vl.encode_field(:x, "trees", type: :quantitative)
+  |> Vl.encode_field(:y, "profits", type: :quantitative),
+  Vl.new()
+  |> Vl.mark(:line, interpolate: :basis)
+  |> Vl.encode_field(:x, "trees", type: :quantitative)
+  |> Vl.encode_field(:y, "profits_derivative", type: :quantitative)
+  |> Vl.encode(:color, value: "#ff0000")
+])
+```
+
+### Automatic differentiation with defn
+
+```elixir
+defmodule GradFun do
+  import Nx.Defn
+
+  defn my_function(x) do
+    x
+    |> Nx.cos()
+    |> Nx.exp()
+    |> Nx.sum()
+    |> print_expr()
+  end
+
+  defn grad_my_function(x) do
+    grad(x, &my_function/1) |> print_expr()
+  end
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{:module, GradFun, <<70, 79, 82, 49, 0, 0, 12, ...>>, true}
+```
+
+```elixir
+GradFun.grad_my_function(Nx.tensor([1.0, 2.0, 3.0]))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32
+  
+  Nx.Defn.Expr
+  parameter a:0                            f32[3]
+  b = cos a                                f32[3]
+  c = exp b                                f32[3]
+  d = sum c, axes: nil, keep_axes: false   f32
+>
+#Nx.Tensor<
+  f32[3]
+  
+  Nx.Defn.Expr
+  parameter a:0       f32[3]
+  b = cos a           f32[3]
+  c = exp b           f32[3]
+  d = sin a           f32[3]
+  e = negate d        f32[3]
+  f = multiply c, e   f32[3]
+>
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[3]
+  [-1.444406509399414, -0.5997574925422668, -0.05243729427456856]
+>
+```

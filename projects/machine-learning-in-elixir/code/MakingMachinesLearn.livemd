@@ -1,0 +1,395 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Make Machines Learn
+
+```elixir
+Mix.install([
+  {:axon, "~> 0.5"},
+  {:nx, "~> 0.5"},
+  {:explorer, "~> 0.5"},
+  {:kino, "~> 0.8"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Resolving Hex dependencies...
+Resolution completed in 0.172s
+New:
+  axon 0.5.1
+  castore 1.0.3
+  complex 0.5.0
+  explorer 0.6.1
+  kino 0.10.0
+  nx 0.5.3
+  rustler_precompiled 0.6.2
+  table 0.1.2
+  table_rex 3.1.1
+  telemetry 1.2.1
+* Getting axon (Hex package)
+* Getting nx (Hex package)
+* Getting explorer (Hex package)
+* Getting kino (Hex package)
+* Getting table (Hex package)
+* Getting rustler_precompiled (Hex package)
+* Getting table_rex (Hex package)
+* Getting castore (Hex package)
+* Getting complex (Hex package)
+* Getting telemetry (Hex package)
+==> table
+Compiling 5 files (.ex)
+Generated table app
+===> Analyzing applications...
+===> Compiling telemetry
+==> complex
+Compiling 2 files (.ex)
+Generated complex app
+==> nx
+Compiling 31 files (.ex)
+Generated nx app
+==> kino
+Compiling 41 files (.ex)
+Generated kino app
+==> table_rex
+Compiling 7 files (.ex)
+Generated table_rex app
+==> axon
+Compiling 23 files (.ex)
+Generated axon app
+==> castore
+Compiling 1 file (.ex)
+Generated castore app
+==> rustler_precompiled
+Compiling 4 files (.ex)
+Generated rustler_precompiled app
+==> explorer
+Compiling 19 files (.ex)
+
+17:21:34.759 [debug] Downloading NIF from https://github.com/elixir-nx/explorer/releases/download/v0.6.1/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so.tar.gz
+
+17:21:36.113 [debug] NIF cached at /Users/sean/Library/Caches/rustler_precompiled/precompiled_nifs/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so.tar.gz and extracted to /Users/sean/Library/Caches/mix/installs/elixir-1.14.2-erts-13.0.2/35bcd3ce8b2ec26f3a63c03eec82928a/_build/dev/lib/explorer/priv/native/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so
+Generated explorer app
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Working with data
+
+```elixir
+require Explorer.DataFrame, as: DF
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Explorer.DataFrame
+```
+
+```elixir
+iris = Explorer.Datasets.iris()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[150 x 5]
+  sepal_length float [5.1, 4.9, 4.7, 4.6, 5.0, ...]
+  sepal_width float [3.5, 3.0, 3.2, 3.1, 3.6, ...]
+  petal_length float [1.4, 1.4, 1.3, 1.5, 1.4, ...]
+  petal_width float [0.2, 0.2, 0.2, 0.2, 0.2, ...]
+  species string ["Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", ...]
+>
+```
+
+### Preparing the data for training
+
+```elixir
+normalized_iris =
+  DF.mutate(
+    iris,
+    for col <- across(~w[sepal_width sepal_length petal_length petal_width]) do
+      {col.name, (col - mean(col)) / variance(col)}
+    end
+  )
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[150 x 5]
+  sepal_length float [-1.0840606189132314, -1.3757361217598396, -1.6674116246064494,
+   -1.8132493760297548, -1.2298983703365356, ...]
+  sepal_width float [2.372289612531505, -0.28722789030650403, 0.7765791108287006,
+   0.24467561026109824, 2.904193113099107, ...]
+  petal_length float [-0.7576391687443842, -0.7576391687443842, -0.7897606710936372,
+   -0.725517666395131, -0.7576391687443842, ...]
+  petal_width float [-1.7147014356654704, -1.7147014356654704, -1.7147014356654704,
+   -1.7147014356654704, -1.7147014356654704, ...]
+  species string ["Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", ...]
+>
+```
+
+```elixir
+shuffled_normalized_iris = DF.shuffle(normalized_iris)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[150 x 5]
+  sepal_length float [1.2493434038596445, -1.2298983703365356, 1.6868566581295583,
+   0.22847914389651144, -0.2090341103734024, ...]
+  sepal_width float [-0.28722789030650403, -4.010552394279718, 0.7765791108287006,
+   -4.5424558948473175, -2.9467453931445133, ...]
+  petal_length float [0.3987349158287289, -0.1473306241085746, 0.3023704087809695,
+   0.07751989233619747, 0.3987349158287289, ...]
+  petal_width float [0.8607846993460835, -0.3411088303259749, 0.3456874723437727,
+   -0.3411088303259749, 1.3758819263483943, ...]
+  species string ["Iris-versicolor", "Iris-versicolor", "Iris-versicolor", "Iris-versicolor",
+   "Iris-virginica", ...]
+>
+```
+
+#### Splitting into train and test sets
+
+```elixir
+train_df = DF.slice(shuffled_normalized_iris, 0..119)
+test_df = DF.slice(shuffled_normalized_iris, 120..149)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[30 x 5]
+  sepal_length float [0.8118301495897308, -1.959087127453059, 1.2493434038596445,
+   0.8118301495897308, -1.0840606189132314, ...]
+  sepal_width float [0.7765791108287006, -4.010552394279718, 0.24467561026109824,
+   -1.3510348914417087, 2.372289612531505, ...]
+  petal_length float [0.23812740408246316, -0.7897606710936372, 0.20600590173321015,
+   0.5914639299242476, -0.7576391687443842, ...]
+  petal_width float [0.5173865480112098, -1.5430023599980331, 0.3456874723437727,
+   1.7192800776832686, -1.7147014356654704, ...]
+  species string ["Iris-versicolor", "Iris-setosa", "Iris-versicolor", "Iris-virginica",
+   "Iris-setosa", ...]
+>
+```
+
+#### Converting DataFrame to Tensor
+
+```elixir
+feature_columns = [
+  "sepal_length",
+  "sepal_width",
+  "petal_length",
+  "petal_width"
+]
+
+label_column = "species"
+
+x_train = Nx.stack(train_df[feature_columns], axis: 1)
+
+y_train =
+  train_df
+  |> DF.pull(label_column)
+  |> Explorer.Series.to_list()
+  |> Enum.map(fn
+    "Iris-setosa" -> 0
+    "Iris-versicolor" -> 1
+    "Iris-virginica" -> 2
+  end)
+  |> Nx.tensor(type: :u8)
+  |> Nx.new_axis(-1)
+  |> Nx.equal(Nx.iota({1, 3}, axis: -1))
+
+x_test = Nx.stack(test_df[feature_columns], axis: 1)
+
+y_test =
+  test_df
+  |> DF.pull(label_column)
+  |> Explorer.Series.to_list()
+  |> Enum.map(fn
+    "Iris-setosa" -> 0
+    "Iris-versicolor" -> 1
+    "Iris-virginica" -> 2
+  end)
+  |> Nx.tensor(type: :u8)
+  |> Nx.new_axis(-1)
+  |> Nx.equal(Nx.iota({1, 3}, axis: -1))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  u8[30][3]
+  [
+    [0, 1, 0],
+    [1, 0, 0],
+    [0, 1, 0],
+    [0, 0, 1],
+    [1, 0, 0],
+    [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 1, 0],
+    [0, 0, 1],
+    [0, 0, 1],
+    [0, 0, 1],
+    [1, 0, 0],
+    [0, 0, 1],
+    [1, 0, 0],
+    [0, 0, 1],
+    [0, 0, ...],
+    ...
+  ]
+>
+```
+
+## Multinomial Logistic Regression with Axon
+
+#### Defining the model
+
+```elixir
+model =
+  Axon.input("iris_features")
+  |> Axon.dense(3, activation: :softmax)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Axon<
+  inputs: %{"iris_features" => nil}
+  outputs: "softmax_0"
+  nodes: 3
+>
+```
+
+```elixir
+Axon.Display.as_graph(model, Nx.template({1, 4}, :f32))
+```
+
+<!-- livebook:{"output":true} -->
+
+```mermaid
+graph TD;
+7[/"iris_features (:input) {1, 4}"/];
+8["dense_0 (:dense) {1, 3}"];
+9["softmax_0 (:softmax) {1, 3}"];
+8 --> 9;
+7 --> 8;
+```
+
+#### Declaring the input pipeline
+
+```elixir
+data_stream =
+  Stream.repeatedly(fn ->
+    {x_train, y_train}
+  end)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Function<51.6935098/2 in Stream.repeatedly/1>
+```
+
+#### Running the training loop
+
+```elixir
+trained_model_state =
+  model
+  |> Axon.Loop.trainer(:categorical_cross_entropy, :sgd)
+  |> Axon.Loop.metric(:accuracy)
+  |> Axon.Loop.run(data_stream, %{}, iterations: 500, epochs: 10)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Epoch: 0, Batch: 450, accuracy: 0.8049530 loss: 0.4976027
+Epoch: 1, Batch: 450, accuracy: 0.8740941 loss: 0.4151042
+Epoch: 2, Batch: 450, accuracy: 0.9118048 loss: 0.3731178
+Epoch: 3, Batch: 450, accuracy: 0.9333282 loss: 0.3441738
+Epoch: 4, Batch: 450, accuracy: 0.9285069 loss: 0.3219456
+Epoch: 5, Batch: 450, accuracy: 0.9249966 loss: 0.3039479
+Epoch: 6, Batch: 450, accuracy: 0.9320097 loss: 0.2889073
+Epoch: 7, Batch: 450, accuracy: 0.9469921 loss: 0.2760663
+Epoch: 8, Batch: 450, accuracy: 0.9538645 loss: 0.2649276
+Epoch: 9, Batch: 450, accuracy: 0.9630468 loss: 0.2551444
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{
+  "dense_0" => %{
+    "bias" => #Nx.Tensor<
+      f32[3]
+      [-0.39006364345550537, 1.434131383895874, -1.0440688133239746]
+    >,
+    "kernel" => #Nx.Tensor<
+      f32[4][3]
+      [
+        [-0.3026171624660492, 0.8268378376960754, 1.2651383876800537],
+        [1.0946170091629028, -0.18169042468070984, -0.23133960366249084],
+        [-1.5668177604675293, 0.2944740056991577, 1.5785413980484009],
+        [-1.1826088428497314, -0.2164556086063385, 2.283381223678589]
+      ]
+    >
+  }
+}
+```
+
+## Evaluating the trained model
+
+```elixir
+data = [{x_test, y_test}]
+
+model
+|> Axon.Loop.evaluator()
+|> Axon.Loop.metric(:accuracy)
+|> Axon.Loop.run(data, trained_model_state)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Batch: 0, accuracy: 0.9000000
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%{
+  0 => %{
+    "accuracy" => #Nx.Tensor<
+      f32
+      0.8999999761581421
+    >
+  }
+}
+```
+
+## Bringing it to Life
+
+```elixir
+serialized_model_state = Nx.serialize(trained_model_state)
+File.write!("iris_model_state.nx", serialized_model_state)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
