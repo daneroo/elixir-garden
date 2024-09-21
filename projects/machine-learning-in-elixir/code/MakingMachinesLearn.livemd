@@ -11,73 +11,6 @@ Mix.install([
 ])
 ```
 
-<!-- livebook:{"output":true} -->
-
-```
-Resolving Hex dependencies...
-Resolution completed in 0.172s
-New:
-  axon 0.5.1
-  castore 1.0.3
-  complex 0.5.0
-  explorer 0.6.1
-  kino 0.10.0
-  nx 0.5.3
-  rustler_precompiled 0.6.2
-  table 0.1.2
-  table_rex 3.1.1
-  telemetry 1.2.1
-* Getting axon (Hex package)
-* Getting nx (Hex package)
-* Getting explorer (Hex package)
-* Getting kino (Hex package)
-* Getting table (Hex package)
-* Getting rustler_precompiled (Hex package)
-* Getting table_rex (Hex package)
-* Getting castore (Hex package)
-* Getting complex (Hex package)
-* Getting telemetry (Hex package)
-==> table
-Compiling 5 files (.ex)
-Generated table app
-===> Analyzing applications...
-===> Compiling telemetry
-==> complex
-Compiling 2 files (.ex)
-Generated complex app
-==> nx
-Compiling 31 files (.ex)
-Generated nx app
-==> kino
-Compiling 41 files (.ex)
-Generated kino app
-==> table_rex
-Compiling 7 files (.ex)
-Generated table_rex app
-==> axon
-Compiling 23 files (.ex)
-Generated axon app
-==> castore
-Compiling 1 file (.ex)
-Generated castore app
-==> rustler_precompiled
-Compiling 4 files (.ex)
-Generated rustler_precompiled app
-==> explorer
-Compiling 19 files (.ex)
-
-17:21:34.759 [debug] Downloading NIF from https://github.com/elixir-nx/explorer/releases/download/v0.6.1/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so.tar.gz
-
-17:21:36.113 [debug] NIF cached at /Users/sean/Library/Caches/rustler_precompiled/precompiled_nifs/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so.tar.gz and extracted to /Users/sean/Library/Caches/mix/installs/elixir-1.14.2-erts-13.0.2/35bcd3ce8b2ec26f3a63c03eec82928a/_build/dev/lib/explorer/priv/native/libexplorer-v0.6.1-nif-2.16-aarch64-apple-darwin.so
-Generated explorer app
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-:ok
-```
-
 ## Working with data
 
 ```elixir
@@ -99,10 +32,10 @@ iris = Explorer.Datasets.iris()
 ```
 #Explorer.DataFrame<
   Polars[150 x 5]
-  sepal_length float [5.1, 4.9, 4.7, 4.6, 5.0, ...]
-  sepal_width float [3.5, 3.0, 3.2, 3.1, 3.6, ...]
-  petal_length float [1.4, 1.4, 1.3, 1.5, 1.4, ...]
-  petal_width float [0.2, 0.2, 0.2, 0.2, 0.2, ...]
+  sepal_length f64 [5.1, 4.9, 4.7, 4.6, 5.0, ...]
+  sepal_width f64 [3.5, 3.0, 3.2, 3.1, 3.6, ...]
+  petal_length f64 [1.4, 1.4, 1.3, 1.5, 1.4, ...]
+  petal_width f64 [0.2, 0.2, 0.2, 0.2, 0.2, ...]
   species string ["Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", ...]
 >
 ```
@@ -124,15 +57,40 @@ normalized_iris =
 ```
 #Explorer.DataFrame<
   Polars[150 x 5]
-  sepal_length float [-1.0840606189132314, -1.3757361217598396, -1.6674116246064494,
-   -1.8132493760297548, -1.2298983703365356, ...]
-  sepal_width float [2.372289612531505, -0.28722789030650403, 0.7765791108287006,
-   0.24467561026109824, 2.904193113099107, ...]
-  petal_length float [-0.7576391687443842, -0.7576391687443842, -0.7897606710936372,
-   -0.725517666395131, -0.7576391687443842, ...]
-  petal_width float [-1.7147014356654704, -1.7147014356654704, -1.7147014356654704,
-   -1.7147014356654704, -1.7147014356654704, ...]
+  sepal_length f64 [-1.0840606189132322, -1.3757361217598405, -1.66741162460645,
+   -1.8132493760297554, -1.2298983703365363, ...]
+  sepal_width f64 [2.3722896125315045, -0.28722789030650403, 0.7765791108287005, 0.2446756102610982,
+   2.9041931130991068, ...]
+  petal_length f64 [-0.7576391687443839, -0.7576391687443839, -0.7897606710936369,
+   -0.7255176663951307, -0.7576391687443839, ...]
+  petal_width f64 [-1.7147014356654708, -1.7147014356654708, -1.7147014356654708,
+   -1.7147014356654708, -1.7147014356654708, ...]
   species string ["Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", ...]
+>
+```
+
+```elixir
+# Missing: convert your species column to a categorical feature
+normalized_iris =
+  DF.mutate(normalized_iris,
+    species: Explorer.Series.cast(species, :category)
+  )
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Explorer.DataFrame<
+  Polars[150 x 5]
+  sepal_length f64 [-1.0840606189132322, -1.3757361217598405, -1.66741162460645,
+   -1.8132493760297554, -1.2298983703365363, ...]
+  sepal_width f64 [2.3722896125315045, -0.28722789030650403, 0.7765791108287005, 0.2446756102610982,
+   2.9041931130991068, ...]
+  petal_length f64 [-0.7576391687443839, -0.7576391687443839, -0.7897606710936369,
+   -0.7255176663951307, -0.7576391687443839, ...]
+  petal_width f64 [-1.7147014356654708, -1.7147014356654708, -1.7147014356654708,
+   -1.7147014356654708, -1.7147014356654708, ...]
+  species category ["Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", "Iris-setosa", ...]
 >
 ```
 
@@ -145,15 +103,15 @@ shuffled_normalized_iris = DF.shuffle(normalized_iris)
 ```
 #Explorer.DataFrame<
   Polars[150 x 5]
-  sepal_length float [1.2493434038596445, -1.2298983703365356, 1.6868566581295583,
-   0.22847914389651144, -0.2090341103734024, ...]
-  sepal_width float [-0.28722789030650403, -4.010552394279718, 0.7765791108287006,
-   -4.5424558948473175, -2.9467453931445133, ...]
-  petal_length float [0.3987349158287289, -0.1473306241085746, 0.3023704087809695,
-   0.07751989233619747, 0.3987349158287289, ...]
-  petal_width float [0.8607846993460835, -0.3411088303259749, 0.3456874723437727,
-   -0.3411088303259749, 1.3758819263483943, ...]
-  species string ["Iris-versicolor", "Iris-versicolor", "Iris-versicolor", "Iris-versicolor",
+  sepal_length f64 [0.6659923981664237, -1.0840606189132322, 1.5410189067062523, 1.2493434038596427,
+   1.978532160976166, ...]
+  sepal_width f64 [-2.946745393144513, 1.8403861119639024, 0.2446756102610982, -0.28722789030650403,
+   -0.28722789030650403, ...]
+  petal_length f64 [0.3987349158287291, -0.7255176663951307, 0.3666134134794761,
+   0.46297792052723546, 0.6557069346227542, ...]
+  petal_width f64 [1.2041828506809578, -1.7147014356654708, 0.51738654801121, 1.8909791533507054,
+   0.6890856236786471, ...]
+  species category ["Iris-virginica", "Iris-setosa", "Iris-versicolor", "Iris-virginica",
    "Iris-virginica", ...]
 >
 ```
@@ -170,16 +128,16 @@ test_df = DF.slice(shuffled_normalized_iris, 120..149)
 ```
 #Explorer.DataFrame<
   Polars[30 x 5]
-  sepal_length float [0.8118301495897308, -1.959087127453059, 1.2493434038596445,
-   0.8118301495897308, -1.0840606189132314, ...]
-  sepal_width float [0.7765791108287006, -4.010552394279718, 0.24467561026109824,
-   -1.3510348914417087, 2.372289612531505, ...]
-  petal_length float [0.23812740408246316, -0.7897606710936372, 0.20600590173321015,
-   0.5914639299242476, -0.7576391687443842, ...]
-  petal_width float [0.5173865480112098, -1.5430023599980331, 0.3456874723437727,
-   1.7192800776832686, -1.7147014356654704, ...]
-  species string ["Iris-versicolor", "Iris-setosa", "Iris-versicolor", "Iris-virginica",
-   "Iris-setosa", ...]
+  sepal_length f64 [-2.1049248788763637, 0.9576679010130332, 1.978532160976166, -0.2090341103734036,
+   0.37431689531981416, ...]
+  sepal_width f64 [-0.28722789030650403, 0.7765791108287005, 2.9041931130991068, -2.946745393144513,
+   -0.28722789030650403, ...]
+  petal_length f64 [-0.7897606710936369, 0.43085641817798215, 0.7520714416705135,
+   0.3987349158287291, 0.27024890643171645, ...]
+  petal_width f64 [-1.7147014356654708, 1.3758819263483948, 2.2343773046855797, 1.3758819263483948,
+   0.3456874723437728, ...]
+  species category ["Iris-setosa", "Iris-virginica", "Iris-virginica", "Iris-virginica",
+   "Iris-versicolor", ...]
 >
 ```
 
@@ -232,21 +190,21 @@ y_test =
 #Nx.Tensor<
   u8[30][3]
   [
-    [0, 1, 0],
-    [1, 0, 0],
-    [0, 1, 0],
-    [0, 0, 1],
     [1, 0, 0],
     [0, 0, 1],
-    [0, 1, 0],
-    [0, 1, 0],
-    [0, 1, 0],
     [0, 0, 1],
     [0, 0, 1],
+    [0, 1, 0],
     [0, 0, 1],
+    [0, 1, 0],
+    [0, 1, 0],
+    [1, 0, 0],
+    [1, 0, 0],
+    [1, 0, 0],
     [1, 0, 0],
     [0, 0, 1],
     [1, 0, 0],
+    [0, 1, 0],
     [0, 0, 1],
     [0, 0, ...],
     ...
@@ -282,11 +240,11 @@ Axon.Display.as_graph(model, Nx.template({1, 4}, :f32))
 
 ```mermaid
 graph TD;
-7[/"iris_features (:input) {1, 4}"/];
-8["dense_0 (:dense) {1, 3}"];
-9["softmax_0 (:softmax) {1, 3}"];
-8 --> 9;
-7 --> 8;
+4[/"iris_features (:input) {1, 4}"/];
+5["dense_0 (:dense) {1, 3}"];
+6["softmax_0 (:softmax) {1, 3}"];
+5 --> 6;
+4 --> 5;
 ```
 
 #### Declaring the input pipeline
@@ -301,7 +259,7 @@ data_stream =
 <!-- livebook:{"output":true} -->
 
 ```
-#Function<51.6935098/2 in Stream.repeatedly/1>
+#Function<53.38948127/2 in Stream.repeatedly/1>
 ```
 
 #### Running the training loop
@@ -317,16 +275,16 @@ trained_model_state =
 <!-- livebook:{"output":true} -->
 
 ```
-Epoch: 0, Batch: 450, accuracy: 0.8049530 loss: 0.4976027
-Epoch: 1, Batch: 450, accuracy: 0.8740941 loss: 0.4151042
-Epoch: 2, Batch: 450, accuracy: 0.9118048 loss: 0.3731178
-Epoch: 3, Batch: 450, accuracy: 0.9333282 loss: 0.3441738
-Epoch: 4, Batch: 450, accuracy: 0.9285069 loss: 0.3219456
-Epoch: 5, Batch: 450, accuracy: 0.9249966 loss: 0.3039479
-Epoch: 6, Batch: 450, accuracy: 0.9320097 loss: 0.2889073
-Epoch: 7, Batch: 450, accuracy: 0.9469921 loss: 0.2760663
-Epoch: 8, Batch: 450, accuracy: 0.9538645 loss: 0.2649276
-Epoch: 9, Batch: 450, accuracy: 0.9630468 loss: 0.2551444
+Epoch: 0, Batch: 450, accuracy: 0.7740963 loss: 0.5469332
+Epoch: 1, Batch: 450, accuracy: 0.8730024 loss: 0.4467245
+Epoch: 2, Batch: 450, accuracy: 0.8979822 loss: 0.3975660
+Epoch: 3, Batch: 450, accuracy: 0.9089975 loss: 0.3647561
+Epoch: 4, Batch: 450, accuracy: 0.9306883 loss: 0.3401475
+Epoch: 5, Batch: 450, accuracy: 0.9416718 loss: 0.3205496
+Epoch: 6, Batch: 450, accuracy: 0.9464563 loss: 0.3043612
+Epoch: 7, Batch: 450, accuracy: 0.9643214 loss: 0.2906507
+Epoch: 8, Batch: 450, accuracy: 0.9666680 loss: 0.2788236
+Epoch: 9, Batch: 450, accuracy: 0.9666680 loss: 0.2684758
 ```
 
 <!-- livebook:{"output":true} -->
@@ -336,15 +294,15 @@ Epoch: 9, Batch: 450, accuracy: 0.9630468 loss: 0.2551444
   "dense_0" => %{
     "bias" => #Nx.Tensor<
       f32[3]
-      [-0.39006364345550537, 1.434131383895874, -1.0440688133239746]
+      [-0.5002021789550781, 1.5211985111236572, -1.0209991931915283]
     >,
     "kernel" => #Nx.Tensor<
       f32[4][3]
       [
-        [-0.3026171624660492, 0.8268378376960754, 1.2651383876800537],
-        [1.0946170091629028, -0.18169042468070984, -0.23133960366249084],
-        [-1.5668177604675293, 0.2944740056991577, 1.5785413980484009],
-        [-1.1826088428497314, -0.2164556086063385, 2.283381223678589]
+        [-1.6933661699295044, 0.45306292176246643, 0.6476757526397705],
+        [1.1128509044647217, 0.07688046246767044, 0.0677172988653183],
+        [-1.5438331365585327, -0.2125571072101593, 0.3389171361923218],
+        [-1.7371693849563599, -0.961873471736908, 1.9834855794906616]
       ]
     >
   }
@@ -365,7 +323,7 @@ model
 <!-- livebook:{"output":true} -->
 
 ```
-Batch: 0, accuracy: 0.9000000
+Batch: 0, accuracy: 0.9333333
 ```
 
 <!-- livebook:{"output":true} -->
@@ -375,7 +333,7 @@ Batch: 0, accuracy: 0.9000000
   0 => %{
     "accuracy" => #Nx.Tensor<
       f32
-      0.8999999761581421
+      0.9333333373069763
     >
   }
 }
@@ -386,6 +344,30 @@ Batch: 0, accuracy: 0.9000000
 ```elixir
 serialized_model_state = Nx.serialize(trained_model_state)
 File.write!("iris_model_state.nx", serialized_model_state)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+```elixir
+# Get the absolute path
+absolute_path = Path.absname("iris_model_state.nx")
+
+# Get the file size
+{:ok, file_info} = File.stat(absolute_path)
+file_size = file_info.size
+
+IO.puts("Siz of model: #{absolute_path} : #{file_size} bytes")
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Siz of model: /Users/daniel/iris_model_state.nx : 256 bytes
 ```
 
 <!-- livebook:{"output":true} -->
