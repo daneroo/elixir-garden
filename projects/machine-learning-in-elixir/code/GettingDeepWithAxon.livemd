@@ -15,21 +15,6 @@ Mix.install([
 Nx.default_backend(EXLA.Backend)
 ```
 
-<!-- livebook:{"output":true} -->
-
-```
-==> exla
-Using libexla.so from /Users/sean/Library/Caches/xla/exla/elixir-1.14.2-erts-13.0.2-xla-0.4.4-exla-0.5.3-defofxrodwsk5sselkno4icm44/libexla.so
-Compiling 21 files (.ex)
-Generated exla app
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-{Nx.BinaryBackend, []}
-```
-
 ## Using Nx to Create a Simple Neural Network
 
 ```elixir
@@ -83,22 +68,14 @@ key = Nx.Random.key(42)
 <!-- livebook:{"output":true} -->
 
 ```
-
-07:28:28.451 [info] TfrtCpuClient created.
-
-```
-
-<!-- livebook:{"output":true} -->
-
-```
 {#Nx.Tensor<
    f32
-   EXLA.Backend<host:0, 0.2462921526.528875539.17413>
+   EXLA.Backend<host:0, 0.1724559314.4139122705.145180>
    0.6716941595077515
  >,
  #Nx.Tensor<
    u32[2]
-   EXLA.Backend<host:0, 0.2462921526.528875539.17415>
+   EXLA.Backend<host:0, 0.1724559314.4139122705.145182>
    [4249898905, 2425127087]
  >}
 ```
@@ -115,7 +92,7 @@ input
 ```
 #Nx.Tensor<
   f32
-  EXLA.Backend<host:0, 0.2462921526.528875539.17926>
+  EXLA.Backend<host:0, 0.1724559314.4139122705.145693>
   0.6635995507240295
 >
 ```
@@ -158,7 +135,7 @@ labels =
 ```
 #Nx.Tensor<
   u8[60000][10]
-  EXLA.Backend<host:0, 0.2462921526.528875539.17936>
+  EXLA.Backend<host:0, 0.1724559314.4139122705.145703>
   [
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -186,7 +163,7 @@ test_labels = labels[test_range]
 ```
 #Nx.Tensor<
   u8[10000][10]
-  EXLA.Backend<host:0, 0.2462921526.528875539.17944>
+  EXLA.Backend<host:0, 0.1724559314.4139122705.145711>
   [
     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
@@ -215,7 +192,7 @@ test_data =
 <!-- livebook:{"output":true} -->
 
 ```
-#Function<73.6935098/2 in Stream.zip_with/2>
+#Function<76.38948127/2 in Stream.zip_with/2>
 ```
 
 ## Building the Model
@@ -245,15 +222,15 @@ Axon.Display.as_graph(model, Nx.template({1, 784}, :f32))
 
 ```mermaid
 graph TD;
-3[/"images (:input) {1, 784}"/];
-4["dense_0 (:dense) {1, 128}"];
-5["relu_0 (:relu) {1, 128}"];
-6["dense_1 (:dense) {1, 10}"];
-7["softmax_0 (:softmax) {1, 10}"];
-6 --> 7;
-5 --> 6;
-4 --> 5;
-3 --> 4;
+7[/"images (:input) {1, 784}"/];
+8["dense_0 (:dense) {1, 128}"];
+9["relu_0 (:relu) {1, 128}"];
+10["dense_1 (:dense) {1, 10}"];
+11["softmax_0 (:softmax) {1, 10}"];
+10 --> 11;
+9 --> 10;
+8 --> 9;
+7 --> 8;
 ```
 
 ```elixir
@@ -266,6 +243,13 @@ Axon.Display.as_table(model, template)
 <!-- livebook:{"output":true} -->
 
 ```
+warning: using map.field notation (without parentheses) to invoke function TableRex.Renderer.Text.default_options() is deprecated, you must add parentheses instead: remote.function()
+  (table_rex 3.1.1) lib/table_rex/table.ex:274: TableRex.Table.render/2
+  (table_rex 3.1.1) lib/table_rex/table.ex:292: TableRex.Table.render!/2
+  (axon 0.6.1) lib/axon/display.ex:51: Axon.Display.as_table/2
+  (elixir 1.17.2) src/elixir.erl:386: :elixir.eval_external_handler/3
+  (stdlib 6.0) erl_eval.erl:904: :erl_eval.do_apply/7
+
 +-----------------------------------------------------------------------------------------------------------+
 |                                                   Model                                                   |
 +==================================+=============+==============+===================+=======================+
@@ -303,182 +287,189 @@ IO.inspect(model, structs: false)
 
 ```
 %{
-  __struct__: Axon,
+  output: 11,
   nodes: %{
-    3 => %{
-      __struct__: Axon.Node,
-      args: [],
-      hooks: [],
-      id: 3,
-      mode: :both,
-      name: #Function<67.122028880/2 in Axon.name/2>,
-      op: :input,
-      op_name: :input,
-      opts: [shape: {nil, 784}, optional: false],
-      parameters: [],
-      parent: [],
-      policy: %{
-        __struct__: Axon.MixedPrecision.Policy,
-        compute: {:f, 32},
-        output: {:f, 32},
-        params: {:f, 32}
-      },
-      stacktrace: [
-        {Axon, :layer, 3, [file: 'lib/axon.ex', line: 338]},
-        {:erl_eval, :do_apply, 7, [file: 'erl_eval.erl', line: 744]},
-        {:erl_eval, :expr_list, 7, [file: 'erl_eval.erl', line: 961]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 454]},
-        {:erl_eval, :expr_list, 7, [file: 'erl_eval.erl', line: 961]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 454]}
-      ]
-    },
-    4 => %{
-      __struct__: Axon.Node,
-      args: [:layer, :parameter, :parameter],
-      hooks: [],
-      id: 4,
-      mode: :both,
-      name: #Function<66.122028880/2 in Axon.name/2>,
-      op: :dense,
-      op_name: :dense,
-      opts: [],
-      parameters: [
-        %{
-          __struct__: Axon.Parameter,
-          frozen: false,
-          initializer: #Function<3.99264144/3 in Axon.Initializers.glorot_uniform/1>,
-          name: "kernel",
-          shape: #Function<27.122028880/1 in Axon.dense/3>,
-          type: {:f, 32}
-        },
-        %{
-          __struct__: Axon.Parameter,
-          frozen: false,
-          initializer: #Function<23.99264144/2 in Axon.Initializers.zeros/0>,
-          name: "bias",
-          shape: #Function<28.122028880/1 in Axon.dense/3>,
-          type: {:f, 32}
-        }
-      ],
-      parent: [3],
-      policy: %{
-        __struct__: Axon.MixedPrecision.Policy,
-        compute: {:f, 32},
-        output: {:f, 32},
-        params: {:f, 32}
-      },
-      stacktrace: [
-        {Axon, :layer, 3, [file: 'lib/axon.ex', line: 338]},
-        {Axon, :dense, 3, [file: 'lib/axon.ex', line: 747]},
-        {:erl_eval, :do_apply, 7, [file: 'erl_eval.erl', line: 744]},
-        {:erl_eval, :expr_list, 7, [file: 'erl_eval.erl', line: 961]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 454]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 492]}
-      ]
-    },
-    5 => %{
-      __struct__: Axon.Node,
-      args: [:layer],
-      hooks: [],
-      id: 5,
-      mode: :both,
-      name: #Function<66.122028880/2 in Axon.name/2>,
-      op: :relu,
-      op_name: :relu,
-      opts: [],
-      parameters: [],
-      parent: [4],
-      policy: %{
-        __struct__: Axon.MixedPrecision.Policy,
-        compute: {:f, 32},
-        output: {:f, 32},
-        params: {:f, 32}
-      },
-      stacktrace: [
-        {Axon, :layer, 3, [file: 'lib/axon.ex', line: 338]},
-        {:erl_eval, :do_apply, 7, [file: 'erl_eval.erl', line: 744]},
-        {:erl_eval, :expr_list, 7, [file: 'erl_eval.erl', line: 961]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 454]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 492]},
-        {:elixir, :eval_forms, 4, [file: 'src/elixir.erl', line: 294]}
-      ]
-    },
-    6 => %{
-      __struct__: Axon.Node,
-      args: [:layer, :parameter, :parameter],
-      hooks: [],
-      id: 6,
-      mode: :both,
-      name: #Function<66.122028880/2 in Axon.name/2>,
-      op: :dense,
-      op_name: :dense,
-      opts: [],
-      parameters: [
-        %{
-          __struct__: Axon.Parameter,
-          frozen: false,
-          initializer: #Function<3.99264144/3 in Axon.Initializers.glorot_uniform/1>,
-          name: "kernel",
-          shape: #Function<27.122028880/1 in Axon.dense/3>,
-          type: {:f, 32}
-        },
-        %{
-          __struct__: Axon.Parameter,
-          frozen: false,
-          initializer: #Function<23.99264144/2 in Axon.Initializers.zeros/0>,
-          name: "bias",
-          shape: #Function<28.122028880/1 in Axon.dense/3>,
-          type: {:f, 32}
-        }
-      ],
-      parent: [5],
-      policy: %{
-        __struct__: Axon.MixedPrecision.Policy,
-        compute: {:f, 32},
-        output: {:f, 32},
-        params: {:f, 32}
-      },
-      stacktrace: [
-        {Axon, :layer, 3, [file: 'lib/axon.ex', line: 338]},
-        {Axon, :dense, 3, [file: 'lib/axon.ex', line: 747]},
-        {:erl_eval, :do_apply, 7, [file: 'erl_eval.erl', line: 744]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 492]},
-        {:elixir, :eval_forms, 4, [file: 'src/elixir.erl', line: 294]},
-        {Module.ParallelChecker, :verify, 1,
-         [file: 'lib/module/parallel_checker.ex', line: 107]}
-      ]
-    },
     7 => %{
-      __struct__: Axon.Node,
-      args: [:layer],
-      hooks: [],
+      args: [],
       id: 7,
+      name: #Function<69.29713129/2 in Axon.name/2>,
+      parent: [],
       mode: :both,
-      name: #Function<66.122028880/2 in Axon.name/2>,
-      op: :softmax,
-      op_name: :softmax,
-      opts: [],
-      parameters: [],
-      parent: [6],
-      policy: %{
-        __struct__: Axon.MixedPrecision.Policy,
-        compute: {:f, 32},
-        output: {:f, 32},
-        params: {:f, 32}
-      },
+      opts: [shape: {nil, 784}, optional: false],
+      op: :input,
       stacktrace: [
-        {Axon, :layer, 3, [file: 'lib/axon.ex', line: 338]},
-        {:erl_eval, :do_apply, 7, [file: 'erl_eval.erl', line: 744]},
-        {:erl_eval, :expr, 6, [file: 'erl_eval.erl', line: 492]},
-        {:elixir, :eval_forms, 4, [file: 'src/elixir.erl', line: 294]},
+        {Axon, :layer, 3, [file: ~c"lib/axon.ex", line: 338]},
+        {:elixir, :eval_external_handler, 3,
+         [file: ~c"src/elixir.erl", line: 386]},
+        {:erl_eval, :do_apply, 7, [file: ~c"erl_eval.erl", line: 904]},
+        {:erl_eval, :expr_list, 7, [file: ~c"erl_eval.erl", line: 1192]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 610]},
+        {:erl_eval, :expr_list, 7, [file: ~c"erl_eval.erl", line: 1192]}
+      ],
+      __struct__: Axon.Node,
+      parameters: [],
+      hooks: [],
+      op_name: :input,
+      policy: %{
+        output: {:f, 32},
+        params: {:f, 32},
+        __struct__: Axon.MixedPrecision.Policy,
+        compute: {:f, 32}
+      }
+    },
+    8 => %{
+      args: [:layer, :parameter, :parameter],
+      id: 8,
+      name: #Function<68.29713129/2 in Axon.name/2>,
+      parent: ~c"\a",
+      mode: :both,
+      opts: [],
+      op: :dense,
+      stacktrace: [
+        {Axon, :layer, 3, [file: ~c"lib/axon.ex", line: 338]},
+        {Axon, :dense, 3, [file: ~c"lib/axon.ex", line: 816]},
+        {:elixir, :eval_external_handler, 3,
+         [file: ~c"src/elixir.erl", line: 386]},
+        {:erl_eval, :do_apply, 7, [file: ~c"erl_eval.erl", line: 904]},
+        {:erl_eval, :expr_list, 7, [file: ~c"erl_eval.erl", line: 1192]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 610]}
+      ],
+      __struct__: Axon.Node,
+      parameters: [
+        %{
+          name: "kernel",
+          type: {:f, 32},
+          __struct__: Axon.Parameter,
+          children: nil,
+          shape: #Function<28.29713129/1 in Axon.dense/3>,
+          initializer: #Function<3.47872556/3 in Axon.Initializers.glorot_uniform/1>,
+          frozen: false
+        },
+        %{
+          name: "bias",
+          type: {:f, 32},
+          __struct__: Axon.Parameter,
+          children: nil,
+          shape: #Function<29.29713129/1 in Axon.dense/3>,
+          initializer: #Function<23.47872556/2 in Axon.Initializers.zeros/0>,
+          frozen: false
+        }
+      ],
+      hooks: [],
+      op_name: :dense,
+      policy: %{
+        output: {:f, 32},
+        params: {:f, 32},
+        __struct__: Axon.MixedPrecision.Policy,
+        compute: {:f, 32}
+      }
+    },
+    9 => %{
+      args: [:layer],
+      id: 9,
+      name: #Function<68.29713129/2 in Axon.name/2>,
+      parent: ~c"\b",
+      mode: :both,
+      opts: [],
+      op: :relu,
+      stacktrace: [
+        {Axon, :layer, 3, [file: ~c"lib/axon.ex", line: 338]},
+        {:elixir, :eval_external_handler, 3,
+         [file: ~c"src/elixir.erl", line: 386]},
+        {:erl_eval, :do_apply, 7, [file: ~c"erl_eval.erl", line: 904]},
+        {:erl_eval, :expr_list, 7, [file: ~c"erl_eval.erl", line: 1192]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 610]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 648]}
+      ],
+      __struct__: Axon.Node,
+      parameters: [],
+      hooks: [],
+      op_name: :relu,
+      policy: %{
+        output: {:f, 32},
+        params: {:f, 32},
+        __struct__: Axon.MixedPrecision.Policy,
+        compute: {:f, 32}
+      }
+    },
+    10 => %{
+      args: [:layer, :parameter, :parameter],
+      id: 10,
+      name: #Function<68.29713129/2 in Axon.name/2>,
+      parent: ~c"\t",
+      mode: :both,
+      opts: [],
+      op: :dense,
+      stacktrace: [
+        {Axon, :layer, 3, [file: ~c"lib/axon.ex", line: 338]},
+        {Axon, :dense, 3, [file: ~c"lib/axon.ex", line: 816]},
+        {:elixir, :eval_external_handler, 3,
+         [file: ~c"src/elixir.erl", line: 386]},
+        {:erl_eval, :do_apply, 7, [file: ~c"erl_eval.erl", line: 904]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 648]},
+        {:elixir, :eval_forms, 4, [file: ~c"src/elixir.erl", line: 364]}
+      ],
+      __struct__: Axon.Node,
+      parameters: [
+        %{
+          name: "kernel",
+          type: {:f, 32},
+          __struct__: Axon.Parameter,
+          children: nil,
+          shape: #Function<28.29713129/1 in Axon.dense/3>,
+          initializer: #Function<3.47872556/3 in Axon.Initializers.glorot_uniform/1>,
+          frozen: false
+        },
+        %{
+          name: "bias",
+          type: {:f, 32},
+          __struct__: Axon.Parameter,
+          children: nil,
+          shape: #Function<29.29713129/1 in Axon.dense/3>,
+          initializer: #Function<23.47872556/2 in Axon.Initializers.zeros/0>,
+          frozen: false
+        }
+      ],
+      hooks: [],
+      op_name: :dense,
+      policy: %{
+        output: {:f, 32},
+        params: {:f, 32},
+        __struct__: Axon.MixedPrecision.Policy,
+        compute: {:f, 32}
+      }
+    },
+    11 => %{
+      args: [:layer],
+      id: 11,
+      name: #Function<68.29713129/2 in Axon.name/2>,
+      parent: ~c"\n",
+      mode: :both,
+      opts: [],
+      op: :softmax,
+      stacktrace: [
+        {Axon, :layer, 3, [file: ~c"lib/axon.ex", line: 338]},
+        {:elixir, :eval_external_handler, 3,
+         [file: ~c"src/elixir.erl", line: 386]},
+        {:erl_eval, :do_apply, 7, [file: ~c"erl_eval.erl", line: 904]},
+        {:erl_eval, :expr, 6, [file: ~c"erl_eval.erl", line: 648]},
+        {:elixir, :eval_forms, 4, [file: ~c"src/elixir.erl", line: 364]},
         {Module.ParallelChecker, :verify, 1,
-         [file: 'lib/module/parallel_checker.ex', line: 107]},
-        {Livebook.Runtime.Evaluator, :eval, 3,
-         [file: 'lib/livebook/runtime/evaluator.ex', line: 605]}
-      ]
+         [file: ~c"lib/module/parallel_checker.ex", line: 112]}
+      ],
+      __struct__: Axon.Node,
+      parameters: [],
+      hooks: [],
+      op_name: :softmax,
+      policy: %{
+        output: {:f, 32},
+        params: {:f, 32},
+        __struct__: Axon.MixedPrecision.Policy,
+        compute: {:f, 32}
+      }
     }
   },
-  output: 7
+  __struct__: Axon
 }
 ```
 
@@ -506,17 +497,17 @@ trained_model_state =
 
 ```
 
-07:28:53.721 [debug] Forwarding options: [compiler: EXLA] to JIT compiler
-Epoch: 0, Batch: 750, accuracy: 0.7766522 loss: 0.9377993
-Epoch: 1, Batch: 768, accuracy: 0.8827616 loss: 0.6861258
-Epoch: 2, Batch: 736, accuracy: 0.8973457 loss: 0.5847851
-Epoch: 3, Batch: 754, accuracy: 0.9064156 loss: 0.5213981
-Epoch: 4, Batch: 772, accuracy: 0.9122735 loss: 0.4791193
-Epoch: 5, Batch: 740, accuracy: 0.9163504 loss: 0.4499330
-Epoch: 6, Batch: 758, accuracy: 0.9210928 loss: 0.4253644
-Epoch: 7, Batch: 776, accuracy: 0.9245898 loss: 0.4056520
-Epoch: 8, Batch: 744, accuracy: 0.9276215 loss: 0.3899296
-Epoch: 9, Batch: 762, accuracy: 0.9305987 loss: 0.3754228
+15:32:19.440 [debug] Forwarding options: [compiler: EXLA] to JIT compiler
+Epoch: 0, Batch: 750, accuracy: 0.7635443 loss: 0.9743937
+Epoch: 1, Batch: 768, accuracy: 0.8821928 loss: 0.7049798
+Epoch: 2, Batch: 736, accuracy: 0.8966249 loss: 0.5979463
+Epoch: 3, Batch: 754, accuracy: 0.9049256 loss: 0.5312265
+Epoch: 4, Batch: 772, accuracy: 0.9117885 loss: 0.4868605
+Epoch: 5, Batch: 740, accuracy: 0.9172359 loss: 0.4563811
+Epoch: 6, Batch: 758, accuracy: 0.9212780 loss: 0.4307739
+Epoch: 7, Batch: 776, accuracy: 0.9244087 loss: 0.4102954
+Epoch: 8, Batch: 744, accuracy: 0.9274328 loss: 0.3940055
+Epoch: 9, Batch: 762, accuracy: 0.9307626 loss: 0.3789910
 ```
 
 <!-- livebook:{"output":true} -->
@@ -526,14 +517,14 @@ Epoch: 9, Batch: 762, accuracy: 0.9305987 loss: 0.3754228
   "dense_0" => %{
     "bias" => #Nx.Tensor<
       f32[128]
-      EXLA.Backend<host:0, 0.2462921526.528875539.158718>
-      [0.038006994873285294, 0.0023085640277713537, 0.01885996200144291, 0.06395889073610306, 0.02408021129667759, -0.09641263633966446, -0.02608571946620941, -0.057725466787815094, -0.055463436990976334, 0.09094510972499847, 0.05602146312594414, 0.04836473613977432, 0.048004329204559326, 0.03196647763252258, 5.727199604734778e-4, -0.021658506244421005, -0.03107193484902382, 0.15605273842811584, 0.028832754120230675, -0.002657117787748575, -0.03558851778507233, -0.013192436657845974, 0.029296284541487694, 0.04878133907914162, 0.005048924591392279, 0.09682823717594147, -0.015448004007339478, -0.014042752794921398, 0.041686881333589554, 0.004103715065866709, 2.3697104188613594e-4, 0.0010538442293182015, 0.03916625678539276, 0.05391925945878029, 0.06711956113576889, 0.015782201662659645, 0.10707330703735352, 0.02256917580962181, -0.002469851868227124, 0.07808250933885574, 0.03832476958632469, 0.048333242535591125, -0.0011666241334751248, 0.1354411244392395, -0.02591058239340782, 0.013476435095071793, 0.0026814271695911884, 0.040886443108320236, ...]
+      EXLA.Backend<host:0, 0.1724559314.4139384849.24341>
+      [-0.04299028590321541, -0.00813752505928278, 0.006743307691067457, -0.0184532031416893, -0.03250376135110855, 0.08035925775766373, 0.0484258197247982, -0.007157719228416681, 3.878758434439078e-5, 0.08680692315101624, -0.05663647875189781, -0.01604347676038742, 0.039339758455753326, 0.005597877316176891, 0.025172589346766472, -0.040269434452056885, 0.00562853179872036, -0.0013647805899381638, 0.02014189213514328, 0.024227742105722427, 0.08858231455087662, 0.02617560513317585, 0.08268802613019943, 0.046605490148067474, 0.09096963703632355, 0.09885413944721222, -0.011350059881806374, -0.055556610226631165, 0.03784015402197838, 0.02125282771885395, 0.04371371120214462, 0.020534129813313484, -0.0035465529654175043, -0.01119325403124094, -0.025059552863240242, -0.015602444298565388, 0.06675969064235687, 0.10324396193027496, -0.0224545169621706, -0.005611761473119259, -0.03327278420329094, -0.04750055447220802, 0.0027535455301404, -0.007619854994118214, -0.00423169881105423, 0.0655570700764656, 0.05514245852828026, -0.0191146619617939, ...]
     >,
     "kernel" => #Nx.Tensor<
       f32[784][128]
-      EXLA.Backend<host:0, 0.2462921526.528875539.158719>
+      EXLA.Backend<host:0, 0.1724559314.4139384849.24342>
       [
-        [0.01628457009792328, 0.02909286692738533, -8.432272006757557e-4, 0.0125099653378129, -0.043129824101924896, -0.007561913225799799, -0.03793160989880562, -0.00668687466531992, -0.06767266243696213, -0.06258268654346466, -0.05735395476222038, 0.07054654508829117, -0.04191448912024498, 0.05929356813430786, -0.030911769717931747, 0.05923779681324959, 0.02672918513417244, 0.020379068329930305, -0.03248370438814163, -0.0032691783271729946, 0.07483813911676407, 0.04213695600628853, 0.048790764063596725, 0.05062267929315567, 0.05285528674721718, 0.03796945512294769, -0.020679082721471786, 8.117638062685728e-4, 0.026464346796274185, -0.015784094110131264, 0.013077737763524055, 0.019808124750852585, 0.06148790195584297, 0.008441302925348282, -0.04038367047905922, 0.03883147984743118, -0.03275085985660553, 0.05031280219554901, -0.06918388605117798, -0.05256645008921623, 0.061814721673727036, -6.259807560127228e-5, -0.027265088632702827, 0.06595899909734726, -0.059415727853775024, 0.05834353342652321, 0.06136328727006912, ...],
+        [0.07325421273708344, -0.05331948399543762, 0.017646469175815582, 0.017868125811219215, 0.04146752133965492, -0.01339159905910492, 0.05732390284538269, -0.008138581179082394, 0.039684977382421494, 0.02803589403629303, -0.059070635586977005, 0.062420010566711426, -0.06257380545139313, -0.028996387496590614, 0.011068624444305897, -0.06771023571491241, 0.004365389235317707, -0.061359941959381104, -0.006684380117803812, -0.05153840780258179, -0.03481338918209076, 0.027484888210892677, 0.010547998361289501, -0.030307486653327942, 0.003939114976674318, -0.052392326295375824, 0.07451590150594711, 0.0343543142080307, -0.04214231297373772, -0.03991897031664848, 0.05625149980187416, -0.038288481533527374, 0.034225523471832275, -0.038609977811574936, -0.03420516103506088, -0.012215114198625088, -0.04691438749432564, -0.012327044270932674, 0.008683515712618828, 0.06330268830060959, 0.026055265218019485, 0.014454509131610394, 0.06405405700206757, 0.012189626693725586, -0.04239169880747795, 0.021748393774032593, 0.06160489842295647, ...],
         ...
       ]
     >
@@ -541,18 +532,18 @@ Epoch: 9, Batch: 762, accuracy: 0.9305987 loss: 0.3754228
   "dense_1" => %{
     "bias" => #Nx.Tensor<
       f32[10]
-      EXLA.Backend<host:0, 0.2462921526.528875539.158720>
-      [-0.09656033664941788, 0.060919925570487976, 0.013309387490153313, -0.08331884443759918, 0.06059477478265762, 0.22079676389694214, -0.011022703722119331, 0.09329045563936234, -0.23491176962852478, -0.023097267374396324]
+      EXLA.Backend<host:0, 0.1724559314.4139384849.24343>
+      [-0.06366901844739914, 0.13591574132442474, -0.018278788775205612, -0.02652377262711525, 0.027617286890745163, 0.18885786831378937, -0.05682734027504921, 0.1693778783082962, -0.279554158449173, -0.07691573351621628]
     >,
     "kernel" => #Nx.Tensor<
       f32[128][10]
-      EXLA.Backend<host:0, 0.2462921526.528875539.158721>
+      EXLA.Backend<host:0, 0.1724559314.4139384849.24344>
       [
-        [-0.13746798038482666, 0.040708668529987335, 0.3050400912761688, -0.08084217458963394, -0.12800996005535126, -0.09727321565151215, 0.156231090426445, 0.21965882182121277, -0.1071101501584053, -0.3735743463039398],
-        [0.009988067671656609, 0.2394382357597351, -0.10390512645244598, 0.04003976285457611, 0.2865147292613983, -0.011751548387110233, -0.05742896348237991, -0.10676025599241257, 0.1430588811635971, -0.11218656599521637],
-        [-0.29091811180114746, -0.08330442011356354, -0.15063761174678802, -0.2713231146335602, 0.35592496395111084, -0.16449905931949615, -0.24148191511631012, 0.15679918229579926, 0.24565207958221436, -0.24394728243350983],
-        [-0.17671629786491394, 0.019495537504553795, 0.20852583646774292, 0.2311292439699173, 0.2286386638879776, 0.1683366894721985, -0.03496794030070305, -0.14748144149780273, -0.028599217534065247, -0.24682241678237915],
-        [0.20755550265312195, -0.00966006238013506, 0.13260063529014587, -0.3213678300380707, 0.09676871448755264, -0.016185373067855835, ...],
+        [-0.24567916989326477, 0.19455324113368988, 0.0638708621263504, -0.17135484516620636, -0.08069989830255508, -0.19707746803760529, 0.30216115713119507, -0.25180840492248535, 0.2852000594139099, 0.2311621457338333],
+        [-0.06014598160982132, -0.07530664652585983, 0.08603012561798096, 0.15872283279895782, 0.15890555083751678, 0.05265078693628311, -0.1441352218389511, -0.11021246016025543, 0.0034515289589762688, -0.012993104755878448],
+        [-0.13516183197498322, 0.06266383826732635, 0.1830369532108307, 0.1689484566450119, 0.051484834402799606, 0.15971219539642334, -0.04846806451678276, -0.13905711472034454, -0.2022702991962433, 0.11839661747217178],
+        [-0.04558691754937172, -0.09432997554540634, -0.2042951136827469, 0.29014497995376587, -0.23997071385383606, -0.15737853944301605, 0.09393799304962158, -0.10377650707960129, -0.18438293039798737, 0.26777827739715576],
+        [0.022992124781012535, -0.019097810611128807, 0.02829008176922798, -0.0366244800388813, -0.11841472238302231, -0.07928334176540375, ...],
         ...
       ]
     >
@@ -573,8 +564,8 @@ model
 
 ```
 
-07:29:00.827 [debug] Forwarding options: [compiler: EXLA] to JIT compiler
-Batch: 156, accuracy: 0.9356091
+15:32:30.873 [debug] Forwarding options: [compiler: EXLA] to JIT compiler
+Batch: 156, accuracy: 0.9371019
 ```
 
 <!-- livebook:{"output":true} -->
@@ -584,8 +575,8 @@ Batch: 156, accuracy: 0.9356091
   0 => %{
     "accuracy" => #Nx.Tensor<
       f32
-      EXLA.Backend<host:0, 0.2462921526.528875539.160153>
-      0.9356091022491455
+      EXLA.Backend<host:0, 0.1724559314.4139384849.25776>
+      0.9371019005775452
     >
   }
 }
@@ -603,7 +594,7 @@ Batch: 156, accuracy: 0.9356091
 [
   {#Nx.Tensor<
      f32[64][784]
-     EXLA.Backend<host:0, 0.2462921526.528875539.160154>
+     EXLA.Backend<host:0, 0.1724559314.4139384849.25777>
      [
        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...],
        ...
@@ -611,7 +602,7 @@ Batch: 156, accuracy: 0.9356091
    >,
    #Nx.Tensor<
      u8[64][10]
-     EXLA.Backend<host:0, 0.2462921526.528875539.160155>
+     EXLA.Backend<host:0, 0.1724559314.4139384849.25778>
      [
        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
@@ -625,7 +616,7 @@ Batch: 156, accuracy: 0.9356091
 ```
 
 ```elixir
-test_image = test_batch[0]
+test_image = test_batch[1]
 ```
 
 <!-- livebook:{"output":true} -->
@@ -633,7 +624,7 @@ test_image = test_batch[0]
 ```
 #Nx.Tensor<
   f32[784]
-  EXLA.Backend<host:0, 0.2462921526.528875539.160159>
+  EXLA.Backend<host:0, 0.1724559314.4139384849.25797>
   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...]
 >
 ```
@@ -688,19 +679,13 @@ test_image
 <!-- livebook:{"output":true} -->
 
 ```
-{#Function<135.109794929/2 in Nx.Defn.Compiler.fun/2>,
- #Function<135.109794929/2 in Nx.Defn.Compiler.fun/2>}
+{#Function<134.70434077/2 in Nx.Defn.Compiler.fun/2>,
+ #Function<134.70434077/2 in Nx.Defn.Compiler.fun/2>}
 ```
 
 ```elixir
 # Uncomment and run and this will raise!
-# predict_fn.(trained_model_state, test_image)
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-nil
+predict_fn.(trained_model_state, test_image)
 ```
 
 ```elixir
@@ -715,9 +700,9 @@ probabilities =
 ```
 #Nx.Tensor<
   f32[1][10]
-  EXLA.Backend<host:0, 0.2462921526.528875539.160168>
+  EXLA.Backend<host:0, 0.1724559314.4139384849.25800>
   [
-    [1.8656313477549702e-4, 0.01756841503083706, 0.057717688381671906, 0.8913031220436096, 1.95118882402312e-5, 0.006609070114791393, 6.803686846978962e-4, 2.542594529586495e-6, 0.02590450644493103, 8.315724699059501e-6]
+    [9.18520163395442e-6, 1.9154771871399134e-4, 0.004306578543037176, 0.009376204572618008, 0.002378550823777914, 0.0052066161297261715, 3.823340739472769e-5, 3.9136728446464986e-5, 0.9782620668411255, 1.918784691952169e-4]
   ]
 >
 ```
@@ -731,7 +716,7 @@ probabilities |> Nx.argmax()
 ```
 #Nx.Tensor<
   s64
-  EXLA.Backend<host:0, 0.2462921526.528875539.160170>
-  3
+  EXLA.Backend<host:0, 0.1724559314.4139384849.25801>
+  8
 >
 ```
